@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-dependencies = ['Flask', 'Flask-SQLAlchemy']
+dependencies = ['Flask', 'Flask-SQLAlchemy', 'passlib']
 test_dependencies = ['behave', 'PyHamcrest']
 
 setup(
