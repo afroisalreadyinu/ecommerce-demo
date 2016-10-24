@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 
 dependencies = ['Flask', 'Flask-SQLAlchemy']
-test_dependencies = ['behave']
+test_dependencies = ['behave', 'PyHamcrest']
 
 setup(
     name = "ecommerce-demo",
