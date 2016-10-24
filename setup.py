@@ -14,7 +14,8 @@ setup(
     tests_require = test_dependencies,
     packages=['ecomm_demo'],
     entry_points = {
-        'console_scripts': ['run-ecomm = ecomm_demo:run_app']
+        'console_scripts': ['run-ecomm-demo = ecomm_demo.run:run_app',
+                            'init-ecomm-db = ecomm_demo.run:create_db']
     },
     url = "https://github.com/afroisalreadyinu/",
 )
