@@ -3,6 +3,7 @@ import json
 import behave
 from hamcrest import assert_that, equal_to
 
+
 def to_json(response):
     return json.loads(response.data.decode(response.charset))
 
@@ -15,9 +16,7 @@ def step_impl(context):
 @behave.when('the user posts the signup form')
 def step_impl(context):
     data = {'email': 'goofy@acmeinc.com', 'password': 'secret', 'company': 'Acme Inc'}
-    response = context.client.post('/signup',
-                                   data=json.dumps(data),
-                                   content_type='application/json')
+    response = context.client.post_json('/signup', data)
     context.response = response
 
 @behave.then('a user and its company are created')
