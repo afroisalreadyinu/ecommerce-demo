@@ -32,12 +32,15 @@ def step_impl(context):
 @behave.given('the user has logged out')
 def step_impl(context):
     response = context.client.get('/logout')
+    assert_that(response.status_code, equal_to(200))
 
 @behave.when('the user posts the login form')
 def step_impl(context):
     data = {'email': USER_EMAIL, 'password': USER_PASSWORD}
-    response = context.client.post_json('/login', data=json.dumps(data))
+    response = context.client.post_json('/login', data)
     assert_that(response.status_code, equal_to(200))
+    json_response = to_json(response)
+    assert_that(json_response['email'], equal_to(USER_EMAIL))
 
 @behave.then('the user is logged in')
 def step_impl(context):
