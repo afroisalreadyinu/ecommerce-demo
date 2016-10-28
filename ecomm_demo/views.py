@@ -1,4 +1,5 @@
 from flask import jsonify, request, session, abort
+from sqlalchemy import exc
 from passlib.apps import custom_app_context
 
 from ecomm_demo import app
@@ -33,8 +34,9 @@ def logout():
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    user = User.query.filter_by(email=data['email']).one()
-    if user is None:
+    try:
+        user = User.query.filter_by(email=data['email']).one()
+    except exc.SQLAlchemyError:
         abort(401)
     if custom_app_context.verify(data['password'], user.pw_hash):
         session['email'] = user.email
