@@ -17,6 +17,13 @@ class Client:
     def __getattr__(self, attr):
         return getattr(self.test_client, attr)
 
+
+    def logged_in(self):
+        response = self.test_client.get('/')
+        response_json = json.loads(response.data.decode(response.charset))
+        return 'email' in response_json
+
+
 def before_feature(context, feature):
     app.config['TESTING'] = True
     context.db, context.db_path = tempfile.mkstemp()

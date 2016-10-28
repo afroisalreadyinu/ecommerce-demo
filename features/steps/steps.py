@@ -5,6 +5,7 @@ from hamcrest import assert_that, equal_to
 
 USER_EMAIL =  'goofy@acmeinc.com'
 USER_PASSWORD = 'secret'
+USER_COMPANY = 'Acme Inc'
 
 def to_json(response):
     return json.loads(response.data.decode(response.charset))
@@ -17,7 +18,7 @@ def step_impl(context):
 
 @behave.when('the user posts the signup form')
 def step_impl(context):
-    data = {'email': USER_EMAIL, 'password': USER_PASSWORD, 'company': 'Acme Inc'}
+    data = {'email': USER_EMAIL, 'password': USER_PASSWORD, 'company': USER_COMPANY}
     response = context.client.post_json('/signup', data)
     context.response = response
 
@@ -26,7 +27,7 @@ def step_impl(context):
     assert_that(context.response.status_code, equal_to(200))
     json_response = to_json(context.response)
     assert_that(json_response['email'], equal_to(USER_EMAIL))
-    assert_that(json_response['company'], equal_to('Acme Inc'))
+    assert_that(json_response['company'], equal_to(USER_COMPANY))
 
 
 @behave.given('the user has logged out')
@@ -48,3 +49,13 @@ def step_impl(context):
     assert_that(response.status_code, equal_to(200))
     json_response = to_json(response)
     assert_that(json_response['email'], equal_to(USER_EMAIL))
+
+# Product import etc
+
+@behave.given('the user is logged in')
+def step_impl(context):
+    if context.client.logged_in():
+        return
+    data = {'email': USER_EMAIL, 'password': USER_PASSWORD, 'company': USER_COMPANY}
+    response = context.client.post_json('/signup', data)
+    assert_that(response.status_code, equal_to(200))
