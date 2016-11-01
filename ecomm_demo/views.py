@@ -3,7 +3,7 @@ from sqlalchemy import exc
 from passlib.apps import custom_app_context
 
 from ecomm_demo import app
-from .models import db, User
+from .models import db, User, Product
 
 @app.route("/")
 def index():
@@ -43,3 +43,19 @@ def login():
         return jsonify({"email":user.email})
     else:
         abort(401)
+
+@app.route("/products", methods=["POST"])
+def add_products():
+    data = request.get_json()
+    for product in data:
+        product = Product(**product)
+        db.session.add(product)
+    db.session.commit()
+    return jsonify({"status": "ok"})
+
+@app.route("/products", methods=["GET"])
+def get_products():
+    def to_dict(p):
+        return {'id': p.id, 'label': p.label, 'gtin': p.gtin}
+    products = Product.query.all()
+    return jsonify([to_dict(p) for p in products])
