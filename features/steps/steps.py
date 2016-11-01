@@ -1,7 +1,7 @@
 import json
 
 import behave
-from hamcrest import assert_that, equal_to
+from hamcrest import assert_that, equal_to, is_in
 
 USER_EMAIL =  'goofy@acmeinc.com'
 USER_PASSWORD = 'secret'
@@ -59,3 +59,20 @@ def step_impl(context):
     data = {'email': USER_EMAIL, 'password': USER_PASSWORD, 'company': USER_COMPANY}
     response = context.client.post_json('/signup', data)
     assert_that(response.status_code, equal_to(200))
+
+@behave.when('the user posts a list of products')
+def step_impl(context):
+    products = [x.as_dict() for x in context.table.rows]
+    response = context.client.post_json('/products', products)
+    assert_that(response.status_code, equal_to(200))
+    context.products = products
+
+@behave.then('the products are imported')
+def step_impl(context):
+    response = context.client.get('/products')
+    assert_that(response.status_code, equal_to(200))
+    json_response = to_json(response)
+    assert_that(len(json_response), equal_to(len(context.products)))
+    for product in json_response:
+        product.pop('id')
+        assert_that(product, is_in(context.products))
