@@ -15,10 +15,9 @@ def index():
 def signup():
     data = request.get_json()
     pw_hash = custom_app_context.encrypt(data['password'])
-    user = User(email=data['email'],
-                pw_hash=pw_hash,
-                company=data['company'])
-    db.session.add(user)
+    user = User.new_row(email=data['email'],
+                        pw_hash=pw_hash,
+                        company=data['company'])
     db.session.commit()
     session['email'] = user.email
     return jsonify({'email':user.email,
@@ -48,8 +47,7 @@ def login():
 def add_products():
     data = request.get_json()
     for product in data:
-        product = Product(**product)
-        db.session.add(product)
+        product = Product.new_row(**product)
     db.session.commit()
     return jsonify({"status": "ok"})
 
