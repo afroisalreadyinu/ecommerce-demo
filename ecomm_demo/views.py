@@ -5,6 +5,15 @@ from passlib.apps import custom_app_context
 from ecomm_demo import app
 from .models import db, User, Product
 
+@app.teardown_request
+def teardown_request(exception):
+    if exception:
+        db.session.rollback()
+        db.session.remove()
+    else:
+        db.session.commit()
+        db.session.remove()
+
 @app.route("/")
 def index():
     if 'email' in session:
@@ -18,7 +27,6 @@ def signup():
     user = User.new_row(email=data['email'],
                         pw_hash=pw_hash,
                         company=data['company'])
-    db.session.commit()
     session['email'] = user.email
     return jsonify({'email':user.email,
                     'company': user.company})
@@ -48,7 +56,6 @@ def add_products():
     data = request.get_json()
     for product in data:
         product = Product.new_row(**product)
-    db.session.commit()
     return jsonify({"status": "ok"})
 
 @app.route("/products", methods=["GET"])
