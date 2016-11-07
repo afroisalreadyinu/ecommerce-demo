@@ -23,7 +23,7 @@ class MockUserTable:
     def __init__(self, existing=None):
         self.existing = existing or []
 
-    def new_row(self, email, pw_hash, company):
+    def new_row(self, email, pw_hash, company, commit):
         return UserRow(email, pw_hash, company)
 
     @property

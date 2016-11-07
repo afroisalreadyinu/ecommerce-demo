@@ -6,9 +6,11 @@ db = SQLAlchemy(app)
 class EcommerceModel:
 
     @classmethod
-    def new_row(cls, *args, **kwargs):
+    def new_row(cls, *args, commit=False, **kwargs):
         row = cls(*args, **kwargs)
         db.session.add(row)
+        if commit:
+            db.session.commit()
         return row
 
 class User(db.Model, EcommerceModel):

@@ -6,15 +6,6 @@ from .models import db, User, Product
 from .user_application import UserApplication, UserApplicationError
 from .application import app
 
-@app.teardown_request
-def teardown_request(exception):
-    if exception:
-        db.session.rollback()
-        db.session.remove()
-    else:
-        db.session.commit()
-        db.session.remove()
-
 
 user_app = UserApplication(User, custom_app_context)
 
@@ -54,7 +45,7 @@ def login():
 def add_products():
     data = request.get_json()
     for product in data:
-        product = Product.new_row(**product)
+        product = Product.new_row(commit=True, **product)
     return jsonify({"status": "ok"})
 
 @app.route("/products", methods=["GET"])

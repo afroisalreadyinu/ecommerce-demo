@@ -14,7 +14,8 @@ class UserApplication:
         try:
             user = self.table.new_row(email=email,
                                       pw_hash=self.security_context.encrypt(password),
-                                      company=company)
+                                      company=company,
+                                      commit=True)
         except exc.SQLAlchemyError:
             raise UserApplicationError('User exists')
         return user
