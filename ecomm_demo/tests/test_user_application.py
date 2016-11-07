@@ -1,5 +1,6 @@
 import unittest
 from collections import namedtuple
+from sqlalchemy import exc
 
 from ecomm_demo.user_application import UserApplication, UserApplicationError
 
@@ -30,3 +31,12 @@ class TestuserApplication(unittest.TestCase):
         app = UserApplication(MockUserTable(), MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             user = app.signup('', 'testpass', 'Acme Inc')
+
+
+    def test_signup_user_exists(self):
+        class DuplicateUserMockTable:
+            def new_row(self, *_, **__):
+                raise exc.SQLAlchemyError()
+        app = UserApplication(DuplicateUserMockTable(), MockSecurityContext())
+        with self.assertRaises(UserApplicationError):
+            app.signup(VALID_EMAIL, VALID_PASS, VALID_COMPANY)

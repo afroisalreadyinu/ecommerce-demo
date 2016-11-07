@@ -1,3 +1,5 @@
+from sqlalchemy import exc
+
 class UserApplicationError(Exception):
     pass
 
@@ -9,9 +11,12 @@ class UserApplication:
     def signup(self, email, password, company):
         if any(x.strip() == '' for x in (email, password, company)):
             raise UserApplicationError('Invalid input for user signup')
-        user = self.table.new_row(email=email,
-                                  pw_hash=self.security_context.encrypt(password),
-                                  company=company)
+        try:
+            user = self.table.new_row(email=email,
+                                      pw_hash=self.security_context.encrypt(password),
+                                      company=company)
+        except exc.SQLAlchemyError:
+            raise UserApplicationError('User exists')
         return user
 
     def login(self, email, password):
