@@ -9,3 +9,13 @@ class Config:
 
 app = Flask('ecommerce-demo')
 app.config.from_object(Config)
+
+#-----------------------------------------
+
+from flask import jsonify
+from .user_application import UserApplicationError
+
+@app.errorhandler(Exception)
+def application_error(exc):
+    if isinstance(exc, UserApplicationError):
+        return jsonify({'error': exc.args[0]}), 400
