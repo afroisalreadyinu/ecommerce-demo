@@ -1,5 +1,6 @@
 from flask import jsonify, request, session, abort
 from sqlalchemy import exc
+from passlib.apps import custom_app_context
 
 from .models import db, User, Product
 from .user_application import UserApplication, UserApplicationError
@@ -15,7 +16,7 @@ def teardown_request(exception):
         db.session.remove()
 
 
-user_app = UserApplication(User)
+user_app = UserApplication(User, custom_app_context)
 
 @app.route("/")
 def index():
