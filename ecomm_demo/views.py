@@ -14,6 +14,19 @@ def teardown_request(exception):
         db.session.commit()
         db.session.remove()
 
+class UserApplication:
+    def __init__(self, table):
+        self.table = table
+
+    def signup(self, email, password, company):
+        user = self.table.new_row(email=email,
+                                  pw_hash=custom_app_context.encrypt(password),
+                                  company=company)
+        return user
+
+
+user_app = UserApplication(User)
+
 @app.route("/")
 def index():
     if 'email' in session:
@@ -24,9 +37,9 @@ def index():
 def signup():
     data = request.get_json()
     pw_hash = custom_app_context.encrypt(data['password'])
-    user = User.new_row(email=data['email'],
-                        pw_hash=pw_hash,
-                        company=data['company'])
+    user = user_app.signup(email=data['email'],
+                                 password=data['password'],
+                                 company=data['company'])
     session['email'] = user.email
     return jsonify({'email':user.email,
                     'company': user.company})
