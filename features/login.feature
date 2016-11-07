@@ -5,6 +5,11 @@ Feature: Signup and login
       when the user posts the signup form
       then a user and its company are created
 
+  Scenario: Signup with same credentials again
+     Given the user has logged out
+      when the user posts the signup form
+      then an error message is returned
+
   Scenario: Login
      Given the user has logged out
       when the user posts the login form

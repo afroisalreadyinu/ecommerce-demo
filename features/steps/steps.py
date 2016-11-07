@@ -29,6 +29,11 @@ def step_impl(context):
     assert_that(json_response['email'], equal_to(USER_EMAIL))
     assert_that(json_response['company'], equal_to(USER_COMPANY))
 
+@behave.then('an error message is returned')
+def step_impl(context):
+    assert_that(context.response.status_code, equal_to(400))
+    json_response = to_json(context.response)
+    assert_that(json_response['error'], 'User exists')
 
 @behave.given('the user has logged out')
 def step_impl(context):
