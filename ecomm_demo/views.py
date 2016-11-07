@@ -28,7 +28,7 @@ def signup():
 
 @app.route("/logout")
 def logout():
-    if session['email']:
+    if 'email' in session:
         del session['email']
     return jsonify({})
 
