@@ -74,3 +74,11 @@ class TestuserApplication(unittest.TestCase):
                               MockSecurityContext())
         user = app.login(VALID_EMAIL, VALID_PASS)
         self.assertEqual(user.email, VALID_EMAIL)
+
+
+    def test_login_empty_string(self):
+        existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
+        app = UserApplication(MockUserTable(existing=existing),
+                              MockSecurityContext())
+        with self.assertRaises(UserApplicationError):
+            user = app.login('', '')

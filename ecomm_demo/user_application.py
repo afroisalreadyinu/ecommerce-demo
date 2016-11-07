@@ -20,6 +20,8 @@ class UserApplication:
         return user
 
     def login(self, email, password):
+        if any(x.strip() == '' for x in (email, password)):
+            raise UserApplicationError('Invalid input for user signup')
         try:
             user = self.table.query.filter_by(email=email).one()
         except exc.SQLAlchemyError:
