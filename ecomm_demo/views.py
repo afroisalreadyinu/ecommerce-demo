@@ -1,6 +1,5 @@
 from flask import jsonify, request, session, abort
 from sqlalchemy import exc
-from passlib.apps import custom_app_context
 
 from .models import db, User, Product
 from .user_application import UserApplication, UserApplicationError
@@ -44,15 +43,11 @@ def logout():
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    try:
-        user = User.query.filter_by(email=data['email']).one()
-    except exc.SQLAlchemyError:
+    user = user_app.login(data['email'], data['password'])
+    if not user:
         abort(401)
-    if custom_app_context.verify(data['password'], user.pw_hash):
-        session['email'] = user.email
-        return jsonify({"email":user.email})
-    else:
-        abort(401)
+    session['email'] = user.email
+    return jsonify({"email":user.email})
 
 @app.route("/products", methods=["POST"])
 def add_products():
