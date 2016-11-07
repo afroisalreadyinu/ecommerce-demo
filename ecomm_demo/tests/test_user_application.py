@@ -4,6 +4,11 @@ from collections import namedtuple
 from ecomm_demo.user_application import UserApplication, UserApplicationError
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
+
+VALID_EMAIL = 'goofy@acme.com'
+VALID_PASS = 'testpass'
+VALID_COMPANY = 'Acme Inc'
+
 class MockUserTable:
 
     def new_row(self, email, pw_hash, company):
@@ -17,7 +22,7 @@ class TestuserApplication(unittest.TestCase):
 
     def test_signup_no_error(self):
         app = UserApplication(MockUserTable(), MockSecurityContext())
-        user = app.signup('goofy@acme.com', 'testpass', 'Acme Inc')
+        user = app.signup(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
         self.assertEqual(user.email, 'goofy@acme.com')
 
 
