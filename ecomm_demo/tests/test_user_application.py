@@ -1,7 +1,7 @@
 import unittest
 from collections import namedtuple
 
-from ecomm_demo.views import UserApplication
+from ecomm_demo.user_application import UserApplication, UserApplicationError
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
 

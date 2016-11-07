@@ -1,5 +1,7 @@
-from ecomm_demo import app
+from ecomm_demo.application import app
 from ecomm_demo.models import db
+
+import ecomm_demo.views
 
 def run_app():
     init_app()

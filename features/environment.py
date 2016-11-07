@@ -2,7 +2,8 @@ import os
 import sys
 import tempfile
 import json
-from ecomm_demo import app
+
+from ecomm_demo.application import app
 from ecomm_demo.run import create_db
 
 class Client:
