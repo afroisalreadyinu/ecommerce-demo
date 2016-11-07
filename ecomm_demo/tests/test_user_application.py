@@ -82,3 +82,9 @@ class TestuserApplication(unittest.TestCase):
                               MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             user = app.login('', '')
+
+    def test_login_none_on_wrong_password(self):
+        existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
+        app = UserApplication(MockUserTable(existing=existing),
+                              MockSecurityContext(fail=True))
+        self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
