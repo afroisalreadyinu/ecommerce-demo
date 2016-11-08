@@ -16,7 +16,9 @@ class ResultSet:
         self.result = result
 
     def one(self):
-        return self.result[0]
+        if self.result:
+            return self.result[0]
+        raise exc.SQLAlchemyError()
 
 class MockUserTable:
 
@@ -87,4 +89,9 @@ class TestuserApplication(unittest.TestCase):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
                               MockSecurityContext(fail=True))
+        self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
+
+    def test_login_none_on_user_nonexistent(self):
+        app = UserApplication(MockUserTable(),
+                              MockSecurityContext())
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
