@@ -4,10 +4,12 @@ from passlib.apps import custom_app_context
 
 from .models import db, User, Product
 from .user_application import UserApplication, UserApplicationError
+from .product_application import ProductApplication
 from .application import app
 
 
 user_app = UserApplication(User, custom_app_context)
+product_app = ProductApplication(Product)
 
 @app.route("/")
 def index():
@@ -45,7 +47,7 @@ def login():
 def add_products():
     data = request.get_json()
     for product in data:
-        product = Product.new_row(commit=True, **product)
+        new_product = product_app.add_product(commit=True, **product)
     return jsonify({"status": "ok"})
 
 @app.route("/products", methods=["GET"])
