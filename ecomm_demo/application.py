@@ -19,3 +19,5 @@ from .user_application import UserApplicationError
 def application_error(exc):
     if isinstance(exc, UserApplicationError):
         return jsonify({'error': exc.args[0]}), 400
+    #if we can't handle it, leave it to flask
+    raise exc
