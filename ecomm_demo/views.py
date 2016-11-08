@@ -52,7 +52,5 @@ def add_products():
 
 @app.route("/products", methods=["GET"])
 def get_products():
-    def to_dict(p):
-        return {'id': p.id, 'label': p.label, 'gtin': p.gtin}
-    products = Product.query.all()
-    return jsonify([to_dict(p) for p in products])
+    products = product_app.get_products()
+    return jsonify([p.to_dict() for p in products])
