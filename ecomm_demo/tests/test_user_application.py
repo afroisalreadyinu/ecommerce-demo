@@ -2,7 +2,11 @@ import unittest
 from collections import namedtuple
 from sqlalchemy import exc
 
-from ecomm_demo.user_application import UserApplication, UserApplicationError
+from ecomm_demo.user_application import (
+    UserApplication,
+    UserApplicationError,
+    CompanyApplication
+    )
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
 
@@ -50,13 +54,17 @@ class MockSecurityContext:
 class TestuserApplication(unittest.TestCase):
 
     def test_signup_no_error(self):
-        app = UserApplication(MockUserTable(), MockSecurityContext())
+        app = UserApplication(MockUserTable(),
+                              CompanyApplication(),
+                              MockSecurityContext())
         user = app.signup(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
         self.assertEqual(user.email, 'goofy@acme.com')
 
 
     def test_signup_error_on_empty_arg(self):
-        app = UserApplication(MockUserTable(), MockSecurityContext())
+        app = UserApplication(MockUserTable(),
+                              CompanyApplication(),
+                              MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             user = app.signup('', 'testpass', 'Acme Inc')
 
@@ -65,7 +73,9 @@ class TestuserApplication(unittest.TestCase):
         class DuplicateUserMockTable:
             def new_row(self, *_, **__):
                 raise exc.SQLAlchemyError()
-        app = UserApplication(DuplicateUserMockTable(), MockSecurityContext())
+        app = UserApplication(DuplicateUserMockTable(),
+                              CompanyApplication(),
+                              MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             app.signup(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
 
@@ -73,6 +83,7 @@ class TestuserApplication(unittest.TestCase):
     def test_login_no_error(self):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
+                              CompanyApplication(),
                               MockSecurityContext())
         user = app.login(VALID_EMAIL, VALID_PASS)
         self.assertEqual(user.email, VALID_EMAIL)
@@ -81,6 +92,7 @@ class TestuserApplication(unittest.TestCase):
     def test_login_empty_string(self):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
+                              CompanyApplication(),
                               MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             user = app.login('', '')
@@ -88,10 +100,12 @@ class TestuserApplication(unittest.TestCase):
     def test_login_none_on_wrong_password(self):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
+                              CompanyApplication(),
                               MockSecurityContext(fail=True))
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
 
     def test_login_none_on_user_nonexistent(self):
         app = UserApplication(MockUserTable(),
+                              CompanyApplication(),
                               MockSecurityContext())
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
