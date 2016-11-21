@@ -26,17 +26,18 @@ are implemented. These are:
 
 All domains are extremely simplified (especially the last one, which
 is a hell of its own), but functional complexities are meant to be
-part of the application, to verify the robustness of test-driven
+part of the application, to verify the effectiveness of test-driven
 design.
 
 ### Users
 
 Authentication and authorization are not the point of this demo, so
 they are kept to a minimum. A user can sign up and create a company at
-the same time. There is no means to add another user to the same
-company. Authentication is also rather limited; it's based on setting
-a cookie, which means that you need a client with that capability for
-API scripts. Security is not the point of this demo.
+the same time. Every member of a company can add new users using an
+end point for this purpose. Authentication is also rather limited;
+it's based on setting a cookie, which means that you need a client
+with that capability for API scripts. Security is not the point of
+this demo.
 
 ### Product information & stock availability
 
