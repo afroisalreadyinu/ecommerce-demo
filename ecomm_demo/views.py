@@ -2,13 +2,13 @@ from flask import jsonify, request, session, abort
 from sqlalchemy import exc
 from passlib.apps import custom_app_context
 
-from .models import db, User, Product
-from .user_application import UserApplication, UserApplicationError
+from .models import db, User, Product, Company
+from .user_application import CompanyApplication, UserApplication, UserApplicationError
 from .product_application import ProductApplication
 from .application import app
 
-
-user_app = UserApplication(User, custom_app_context)
+company_app = CompanyApplication(Company)
+user_app = UserApplication(User, company_app, custom_app_context)
 product_app = ProductApplication(Product)
 
 @app.route("/")
@@ -22,10 +22,10 @@ def signup():
     data = request.get_json()
     user = user_app.signup(email=data['email'],
                            password=data['password'],
-                           company=data['company'])
+                           company_label=data['company'])
     session['email'] = user.email
     return jsonify({'email':user.email,
-                    'company': user.company})
+                    'company': user.company.label})
 
 
 @app.route("/logout")

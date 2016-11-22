@@ -24,7 +24,7 @@ class User(db.Model, EcommerceModel):
     )
     company = db.relationship(
         'Company',
-        backref=db.backref('members', order_by=[id]),
+        backref=db.backref('members', order_by=[email]),
         foreign_keys=[company_id],
     )
 
