@@ -22,7 +22,7 @@ class TestProductApplication(unittest.TestCase):
 
 
     def test_query_products(self):
-        existing = [ProductRow(label='test', gtin=GTIN)]
+        existing = [ProductRow(label='test', gtin=GTIN, company='puma')]
         app = ProductApplication(MockProductTable(existing=existing))
-        products = app.get_products()
+        products = app.get_products('puma')
         self.assertEqual(len(list(products)), 1)

@@ -17,6 +17,6 @@ class ProductApplication:
         return self.table.new_row(label=label, gtin=gtin,
                                   company=company, commit=commit)
 
-    def get_products(self):
-        for x in self.table.query.all():
+    def get_products(self, company):
+        for x in self.table.query.filter_by(company=company):
             yield ProductLogic(x)

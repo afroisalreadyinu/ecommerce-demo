@@ -10,6 +10,9 @@ class ResultSet:
             return self.result[0]
         raise exc.SQLAlchemyError()
 
+    def __iter__(self):
+        return iter(self.result)
+
 
 class MockTable:
     ROW_CLASS = None
