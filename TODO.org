@@ -1,0 +1,22 @@
+* TODO Fix bug with existing user signup
+
+* TODO Change products to belong to company
+** TODO Relation between product and company
+** TODO Product belongs to company on import
+
+* TODO Inviting user
+
+* TODO Storage locations
+** TODO Add data model
+** TODO Add creation
+
+* TODO Creating stock
+** TODO Domain action to create stock
+** TODO Connect handlers
+
+* TODO Creating orders
+** TODO Model
+** TODO Application
+** TODO Endpoints
+
+* TODO Specify order routing and stock values
