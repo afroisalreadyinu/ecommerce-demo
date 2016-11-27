@@ -17,11 +17,7 @@ class CompanyApplication:
             return company
 
     def create(self, label):
-        try:
-            company = self.company_table.query.filter_by(label=label).one()
-        except exc.SQLAlchemyError:
-            company = self.company_table.new_row(label=label)
-        return company
+        return self.company_table.new_row(label=label)
 
 class UserApplication:
 
@@ -34,7 +30,9 @@ class UserApplication:
         if any(x.strip() == '' for x in (email, password, company_label)):
             raise UserApplicationError('Invalid input for user signup')
         try:
-            company = self.company_app.get_or_create(company_label)
+            company = self.company_app.get(company_label)
+            if company is None:
+                company = self.company_app.create(company_label)
             user = self.user_table.new_row(
                 email=email,
                 pw_hash=self.security_context.encrypt(password),

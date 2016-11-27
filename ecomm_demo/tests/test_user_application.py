@@ -32,7 +32,9 @@ class MockTable:
         self.existing = existing or []
 
     def new_row(self, commit=False, **kwargs):
-        return self.ROW_CLASS(**kwargs)
+        row = self.ROW_CLASS(**kwargs)
+        self.existing.append(row)
+        return row
 
     @property
     def query(self):
@@ -131,3 +133,10 @@ class TestCompanyApplication(unittest.TestCase):
         companies = [CompanyRow('puma')]
         app = CompanyApplication(MockCompanyTable(companies))
         self.assertEqual(app.get('puma'), companies[0])
+
+    def test_create_company(self):
+        table = MockCompanyTable()
+        app = CompanyApplication(table)
+        self.assertEqual(app.create('puma').label, 'puma')
+        self.assertEqual(len(table.existing), 1)
+        self.assertEqual(table.existing[0].label, 'puma')
