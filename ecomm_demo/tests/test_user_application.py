@@ -7,6 +7,7 @@ from ecomm_demo.user_application import (
     UserApplicationError,
     CompanyApplication
     )
+from common import MockTable
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
 CompanyRow = namedtuple('CompanyRow', 'label')
@@ -14,34 +15,6 @@ CompanyRow = namedtuple('CompanyRow', 'label')
 VALID_EMAIL = 'goofy@acme.com'
 VALID_PASS = 'testpass'
 VALID_COMPANY = 'Acme Inc'
-
-class ResultSet:
-
-    def __init__(self, result):
-        self.result = result
-
-    def one(self):
-        if self.result:
-            return self.result[0]
-        raise exc.SQLAlchemyError()
-
-class MockTable:
-    ROW_CLASS = None
-
-    def __init__(self, existing=None):
-        self.existing = existing or []
-
-    def new_row(self, commit=False, **kwargs):
-        row = self.ROW_CLASS(**kwargs)
-        self.existing.append(row)
-        return row
-
-    @property
-    def query(self):
-        return self
-
-    def filter_by(self, **filters):
-        return ResultSet(self.existing)
 
 class MockUserTable(MockTable):
     ROW_CLASS = UserRow
