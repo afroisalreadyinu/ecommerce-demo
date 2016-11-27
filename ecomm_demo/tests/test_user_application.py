@@ -119,3 +119,15 @@ class TestuserApplication(unittest.TestCase):
                               CompanyApplication(None),
                               MockSecurityContext())
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
+
+
+class TestCompanyApplication(unittest.TestCase):
+
+    def test_get_company_empty(self):
+        app = CompanyApplication(MockCompanyTable())
+        self.assertIsNone(app.get('puma'))
+
+    def test_get_company(self):
+        companies = [CompanyRow('puma')]
+        app = CompanyApplication(MockCompanyTable(companies))
+        self.assertEqual(app.get('puma'), companies[0])

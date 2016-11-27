@@ -8,7 +8,15 @@ class CompanyApplication:
     def __init__(self, company_table):
         self.company_table = company_table
 
-    def get_or_create(self, label):
+    def get(self, label):
+        try:
+            company = self.company_table.query.filter_by(label=label).one()
+        except exc.SQLAlchemyError:
+            return None
+        else:
+            return company
+
+    def create(self, label):
         try:
             company = self.company_table.query.filter_by(label=label).one()
         except exc.SQLAlchemyError:
