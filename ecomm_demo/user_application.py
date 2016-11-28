@@ -53,3 +53,12 @@ class UserApplication:
             return user
         else:
             return None
+
+    def authenticate(self, email):
+        if not email:
+            return None
+        try:
+            user = self.user_table.query.filter_by(email=email).one()
+        except exc.SQLAlchemyError:
+            return None
+        return user

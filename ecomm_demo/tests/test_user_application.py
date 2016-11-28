@@ -95,6 +95,21 @@ class TestuserApplication(unittest.TestCase):
                               MockSecurityContext())
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
 
+    def test_authenticate_false(self):
+        app = UserApplication(MockUserTable(),
+                              CompanyApplication(None),
+                              MockSecurityContext())
+        self.assertIsNone(app.authenticate(VALID_EMAIL))
+        self.assertIsNone(app.authenticate(None))
+        self.assertIsNone(app.authenticate(' '))
+
+    def test_authenticate_true(self):
+        user = UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
+        app = UserApplication(MockUserTable([user]),
+                              CompanyApplication(None),
+                              MockSecurityContext())
+        self.assertEqual(app.authenticate(VALID_EMAIL), user)
+
 
 class TestCompanyApplication(unittest.TestCase):
 
