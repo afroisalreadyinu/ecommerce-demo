@@ -2,12 +2,12 @@ from flask import jsonify, request, session, abort
 from sqlalchemy import exc
 from passlib.apps import custom_app_context
 
-from .models import db, User, Product, Company
+from .models import db, User, Product, Company, Invitation
 from .user_application import CompanyApplication, UserApplication, UserApplicationError
 from .product_application import ProductApplication
 from .application import app
 
-company_app = CompanyApplication(Company)
+company_app = CompanyApplication(Company, Invitation)
 user_app = UserApplication(User, company_app, custom_app_context)
 product_app = ProductApplication(Product)
 

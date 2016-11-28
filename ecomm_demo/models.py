@@ -33,6 +33,21 @@ class Company(db.Model, EcommerceModel):
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(), nullable=False)
 
+class Invitation(db.Model, EcommerceModel):
+    __tablename__ = 'invitation'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(), nullable=False)
+    nonce = db.Column(db.String(), nullable=False)
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey('company.id', ondelete='RESTRICT'),
+        nullable=False,
+    )
+    company = db.relationship(
+        'Company',
+        backref=db.backref('invitations', order_by=[email]),
+        foreign_keys=[company_id],
+    )
 
 class Product(db.Model, EcommerceModel):
     __tablename__ = 'product'
