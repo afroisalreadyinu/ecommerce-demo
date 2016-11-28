@@ -33,7 +33,7 @@ class CompanyApplication:
         subject = "Please join Ecommerce Demo"
         content = "{} has invited you to join {}.".format(current.email, current.company.label)
         invitation = self.invitation_table.new_row(
-            nonce='temp', company=current.company, commit=True
+            nonce='temp', company=current.company, email=invitee_email, commit=True
         )
         return Email(invitee_email, subject, content)
 

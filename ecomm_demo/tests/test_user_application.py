@@ -11,7 +11,7 @@ from common import MockTable
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
 CompanyRow = namedtuple('CompanyRow', 'label')
-InvitationRow = namedtuple('InvitationRow', 'nonce company')
+InvitationRow = namedtuple('InvitationRow', 'nonce company email')
 
 VALID_EMAIL = 'goofy@acme.com'
 VALID_PASS = 'testpass'
@@ -138,3 +138,14 @@ class TestCompanyApplication(unittest.TestCase):
         app = CompanyApplication(MockCompanyTable(), MockInvitationTable())
         email = app.invite_to_company(user, 'invitee@puma.com')
         self.assertEqual(email.recipient, 'invitee@puma.com')
+
+    def test_invite_creates_invitation(self):
+        user = UserRow(VALID_EMAIL, VALID_PASS, CompanyRow(label=VALID_COMPANY))
+        invitation_table = MockInvitationTable()
+        app = CompanyApplication(MockCompanyTable(), invitation_table)
+        app.invite_to_company(user, 'invitee@puma.com')
+        self.assertEqual(len(invitation_table.existing), 1)
+        invitation = invitation_table.existing[0]
+        self.assertEqual(invitation.email, 'invitee@puma.com')
+        self.assertEqual(invitation.company, user.company)
+        self.assertEqual(invitation.nonce, 'temp')
