@@ -45,12 +45,18 @@ def login():
 
 @app.route("/products", methods=["POST"])
 def add_products():
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
     data = request.get_json()
     for product in data:
-        new_product = product_app.add_product(commit=True, **product)
+        new_product = product_app.add_product(commit=True, company=user.company, **product)
     return jsonify({"status": "ok"})
 
 @app.route("/products", methods=["GET"])
 def get_products():
-    products = product_app.get_products()
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
+    products = product_app.get_products(user.company)
     return jsonify([p.to_dict() for p in products])
