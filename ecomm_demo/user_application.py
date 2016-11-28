@@ -1,7 +1,15 @@
 from sqlalchemy import exc
 
+import attr
+
 class UserApplicationError(Exception):
     pass
+
+@attr.s
+class Email:
+    recipient = attr.ib()
+    subject = attr.ib()
+    content = attr.ib()
 
 class CompanyApplication:
 
@@ -62,3 +70,8 @@ class UserApplication:
         except exc.SQLAlchemyError:
             return None
         return user
+
+    def invite(self, current, invitee_email):
+        subject = "Please join Ecommerce Demo"
+        content = "{} has invited you to join {}.".format(current.email, current.company.label)
+        return Email(invitee_email, subject, content)
