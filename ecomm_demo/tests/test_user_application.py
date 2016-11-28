@@ -110,14 +110,6 @@ class TestuserApplication(unittest.TestCase):
                               MockSecurityContext())
         self.assertEqual(app.authenticate(VALID_EMAIL), user)
 
-    def test_invite_creates_email(self):
-        user = UserRow(VALID_EMAIL, VALID_PASS, CompanyRow(label=VALID_COMPANY))
-        app = UserApplication(MockUserTable(),
-                              CompanyApplication(None),
-                              MockSecurityContext())
-        email = app.invite(user, 'invitee@puma.com')
-        self.assertEqual(email.recipient, 'invitee@puma.com')
-
 
 class TestCompanyApplication(unittest.TestCase):
 
@@ -136,3 +128,9 @@ class TestCompanyApplication(unittest.TestCase):
         self.assertEqual(app.create('puma').label, 'puma')
         self.assertEqual(len(table.existing), 1)
         self.assertEqual(table.existing[0].label, 'puma')
+
+    def test_invite_creates_email(self):
+        user = UserRow(VALID_EMAIL, VALID_PASS, CompanyRow(label=VALID_COMPANY))
+        app = CompanyApplication(MockCompanyTable())
+        email = app.invite_to_company(user, 'invitee@puma.com')
+        self.assertEqual(email.recipient, 'invitee@puma.com')

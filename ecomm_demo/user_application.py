@@ -27,6 +27,12 @@ class CompanyApplication:
     def create(self, label):
         return self.company_table.new_row(label=label)
 
+
+    def invite_to_company(self, current, invitee_email):
+        subject = "Please join Ecommerce Demo"
+        content = "{} has invited you to join {}.".format(current.email, current.company.label)
+        return Email(invitee_email, subject, content)
+
 class UserApplication:
 
     def __init__(self, user_table, company_app, security_context):
@@ -70,8 +76,3 @@ class UserApplication:
         except exc.SQLAlchemyError:
             return None
         return user
-
-    def invite(self, current, invitee_email):
-        subject = "Please join Ecommerce Demo"
-        content = "{} has invited you to join {}.".format(current.email, current.company.label)
-        return Email(invitee_email, subject, content)
