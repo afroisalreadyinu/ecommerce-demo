@@ -1,10 +1,12 @@
 * DONE Fix bug with existing user signup
   CLOSED: [2016-11-27 Sun 22:39]
 
-* TODO Change products to belong to company
+* DONE Change products to belong to company
+  CLOSED: [2016-11-28 Mon 09:46]
 ** DONE Relation between product and company
    CLOSED: [2016-11-27 Sun 22:59]
-** TODO Product belongs to company on import
+** DONE Product belongs to company on import
+   CLOSED: [2016-11-28 Mon 09:46]
 
 * TODO Inviting user
 
