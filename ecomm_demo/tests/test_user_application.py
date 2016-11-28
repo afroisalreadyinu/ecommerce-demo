@@ -11,6 +11,7 @@ from common import MockTable
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
 CompanyRow = namedtuple('CompanyRow', 'label')
+InvitationRow = namedtuple('InvitationRow', 'nonce company')
 
 VALID_EMAIL = 'goofy@acme.com'
 VALID_PASS = 'testpass'
@@ -21,6 +22,9 @@ class MockUserTable(MockTable):
 
 class MockCompanyTable(MockTable):
     ROW_CLASS = CompanyRow
+
+class MockInvitationTable(MockTable):
+    ROW_CLASS = InvitationRow
 
 class MockSecurityContext:
 
@@ -38,7 +42,7 @@ class TestuserApplication(unittest.TestCase):
 
     def test_signup_no_error(self):
         app = UserApplication(MockUserTable(),
-                              CompanyApplication(MockCompanyTable()),
+                              CompanyApplication(MockCompanyTable(), None),
                               MockSecurityContext())
         user = app.signup(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
         self.assertEqual(user.email, 'goofy@acme.com')
@@ -46,7 +50,7 @@ class TestuserApplication(unittest.TestCase):
 
     def test_signup_error_on_empty_arg(self):
         app = UserApplication(MockUserTable(),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             user = app.signup('', 'testpass', 'Acme Inc')
@@ -58,7 +62,7 @@ class TestuserApplication(unittest.TestCase):
                 raise exc.SQLAlchemyError()
         mock_company_table = MockCompanyTable()
         app = UserApplication(DuplicateUserMockTable(),
-                              CompanyApplication(mock_company_table),
+                              CompanyApplication(mock_company_table, None),
                               MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             app.signup(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
@@ -68,7 +72,7 @@ class TestuserApplication(unittest.TestCase):
     def test_login_no_error(self):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext())
         user = app.login(VALID_EMAIL, VALID_PASS)
         self.assertEqual(user.email, VALID_EMAIL)
@@ -77,7 +81,7 @@ class TestuserApplication(unittest.TestCase):
     def test_login_empty_string(self):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext())
         with self.assertRaises(UserApplicationError):
             user = app.login('', '')
@@ -85,19 +89,19 @@ class TestuserApplication(unittest.TestCase):
     def test_login_none_on_wrong_password(self):
         existing = [UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)]
         app = UserApplication(MockUserTable(existing=existing),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext(fail=True))
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
 
     def test_login_none_on_user_nonexistent(self):
         app = UserApplication(MockUserTable(),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext())
         self.assertIsNone(app.login(VALID_EMAIL, VALID_PASS))
 
     def test_authenticate_false(self):
         app = UserApplication(MockUserTable(),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext())
         self.assertIsNone(app.authenticate(VALID_EMAIL))
         self.assertIsNone(app.authenticate(None))
@@ -106,7 +110,7 @@ class TestuserApplication(unittest.TestCase):
     def test_authenticate_true(self):
         user = UserRow(VALID_EMAIL, VALID_PASS, VALID_COMPANY)
         app = UserApplication(MockUserTable([user]),
-                              CompanyApplication(None),
+                              CompanyApplication(None, None),
                               MockSecurityContext())
         self.assertEqual(app.authenticate(VALID_EMAIL), user)
 
@@ -114,23 +118,23 @@ class TestuserApplication(unittest.TestCase):
 class TestCompanyApplication(unittest.TestCase):
 
     def test_get_company_empty(self):
-        app = CompanyApplication(MockCompanyTable())
+        app = CompanyApplication(MockCompanyTable(), None)
         self.assertIsNone(app.get('puma'))
 
     def test_get_company(self):
         companies = [CompanyRow('puma')]
-        app = CompanyApplication(MockCompanyTable(companies))
+        app = CompanyApplication(MockCompanyTable(companies), None)
         self.assertEqual(app.get('puma'), companies[0])
 
     def test_create_company(self):
         table = MockCompanyTable()
-        app = CompanyApplication(table)
+        app = CompanyApplication(table, None)
         self.assertEqual(app.create('puma').label, 'puma')
         self.assertEqual(len(table.existing), 1)
         self.assertEqual(table.existing[0].label, 'puma')
 
     def test_invite_creates_email(self):
         user = UserRow(VALID_EMAIL, VALID_PASS, CompanyRow(label=VALID_COMPANY))
-        app = CompanyApplication(MockCompanyTable())
+        app = CompanyApplication(MockCompanyTable(), MockInvitationTable())
         email = app.invite_to_company(user, 'invitee@puma.com')
         self.assertEqual(email.recipient, 'invitee@puma.com')

@@ -11,10 +11,12 @@ class Email:
     subject = attr.ib()
     content = attr.ib()
 
+
 class CompanyApplication:
 
-    def __init__(self, company_table):
+    def __init__(self, company_table, invitation_table):
         self.company_table = company_table
+        self.invitation_table = invitation_table
 
     def get(self, label):
         try:
@@ -27,10 +29,12 @@ class CompanyApplication:
     def create(self, label):
         return self.company_table.new_row(label=label)
 
-
     def invite_to_company(self, current, invitee_email):
         subject = "Please join Ecommerce Demo"
         content = "{} has invited you to join {}.".format(current.email, current.company.label)
+        invitation = self.invitation_table.new_row(
+            nonce='temp', company=current.company, commit=True
+        )
         return Email(invitee_email, subject, content)
 
 class UserApplication:
