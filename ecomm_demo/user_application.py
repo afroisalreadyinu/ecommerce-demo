@@ -1,3 +1,6 @@
+import os
+from base64 import b64encode
+
 from sqlalchemy import exc
 
 import attr
@@ -11,6 +14,9 @@ class Email:
     subject = attr.ib()
     content = attr.ib()
 
+def create_invitation_nonce():
+    random_bytes = os.urandom(8)
+    return b64encode(random_bytes).decode('utf-8')[:-1]
 
 class CompanyApplication:
 
@@ -33,7 +39,9 @@ class CompanyApplication:
         subject = "Please join Ecommerce Demo"
         content = "{} has invited you to join {}.".format(current.email, current.company.label)
         invitation = self.invitation_table.new_row(
-            nonce='temp', company=current.company, email=invitee_email, commit=True
+            nonce=create_invitation_nonce(),
+            company=current.company,
+            email=invitee_email, commit=True
         )
         return Email(invitee_email, subject, content)
 

@@ -5,7 +5,8 @@ from sqlalchemy import exc
 from ecomm_demo.user_application import (
     UserApplication,
     UserApplicationError,
-    CompanyApplication
+    CompanyApplication,
+    create_invitation_nonce
     )
 from common import MockTable
 
@@ -148,4 +149,8 @@ class TestCompanyApplication(unittest.TestCase):
         invitation = invitation_table.existing[0]
         self.assertEqual(invitation.email, 'invitee@puma.com')
         self.assertEqual(invitation.company, user.company)
-        self.assertEqual(invitation.nonce, 'temp')
+        self.assertEqual(len(invitation.nonce), 11, invitation.nonce)
+
+    def test_nonce_generator(self):
+        self.assertNotEqual(create_invitation_nonce(),
+                            create_invitation_nonce())
