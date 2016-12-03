@@ -1,14 +1,4 @@
-* DONE Fix bug with existing user signup
-  CLOSED: [2016-11-27 Sun 22:39]
-
-* DONE Change products to belong to company
-  CLOSED: [2016-11-28 Mon 09:46]
-** DONE Relation between product and company
-   CLOSED: [2016-11-27 Sun 22:59]
-** DONE Product belongs to company on import
-   CLOSED: [2016-11-28 Mon 09:46]
-
-* TODO Inviting user
+* TODO Build feature backlog
 
 * TODO Storage locations
 ** TODO Add data model
@@ -24,3 +14,16 @@
 ** TODO Endpoints
 
 * TODO Specify order routing and stock values
+
+* DONE Fix bug with existing user signup
+  CLOSED: [2016-11-27 Sun 22:39]
+
+* DONE Change products to belong to company
+  CLOSED: [2016-11-28 Mon 09:46]
+** DONE Relation between product and company
+   CLOSED: [2016-11-27 Sun 22:59]
+** DONE Product belongs to company on import
+   CLOSED: [2016-11-28 Mon 09:46]
+
+* DONE Inviting user
+  CLOSED: [2016-12-03 Sat 23:14]
