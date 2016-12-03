@@ -30,4 +30,6 @@ class MockTable:
         return self
 
     def filter_by(self, **filters):
-        return ResultSet(self.existing)
+        results = [x for x in self.existing
+                   if all(getattr(x, attr) == val for attr,val in filters.items())]
+        return ResultSet(results)
