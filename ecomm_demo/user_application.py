@@ -45,6 +45,9 @@ class CompanyApplication:
         )
         return Email(invitee_email, subject, content)
 
+    def get_invitations(self, company):
+        return self.invitation_table.query.filter_by(company=company)
+
 class UserApplication:
 
     def __init__(self, user_table, company_app, security_context):

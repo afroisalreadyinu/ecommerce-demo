@@ -154,3 +154,16 @@ class TestCompanyApplication(unittest.TestCase):
     def test_nonce_generator(self):
         self.assertNotEqual(create_invitation_nonce(),
                             create_invitation_nonce())
+
+    def test_get_invitations(self):
+        company = CompanyRow(label=VALID_COMPANY)
+        invitation_table = MockInvitationTable([
+            InvitationRow(email='invitee1@x.com', nonce='123', company=company),
+            InvitationRow(email='invitee2@y.com',
+                          nonce='456',
+                          company=CompanyRow(label='Other company'))
+        ])
+        app = CompanyApplication(MockCompanyTable(), invitation_table)
+        invitations = list(app.get_invitations(company))
+        self.assertEqual(len(invitations), 1)
+        self.assertEqual(invitations[0].email, 'invitee1@x.com')
