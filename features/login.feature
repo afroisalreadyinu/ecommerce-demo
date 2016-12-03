@@ -20,3 +20,4 @@ Feature: Signup and login
      Given the user is logged in
       when the user posts the invite form
       then an invitation is sent
+       and invitation can be used to sign up

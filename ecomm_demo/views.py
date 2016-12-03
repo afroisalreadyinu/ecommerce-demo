@@ -52,6 +52,27 @@ def invite():
     invitation = company_app.invite_to_company(user, data['invitee_email'])
     return jsonify({'recipient': invitation.recipient})
 
+@app.route('/invite', methods=['GET'])
+def get_invitations():
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
+    invitations = [{'email':i.email, 'nonce':i.nonce}
+                   for i in company_app.get_invitations(user.company)]
+    return jsonify(invitations)
+
+@app.route('/signup-with-invitation', methods=['POST'])
+def signup_with_invitation():
+    data = request.get_json()
+    invitation = company_app.get_by_nonce(data['nonce'])
+    if invitation is None:
+        abort(401)
+    user = user_app.signup(invitation.email,
+                           data['password'],
+                           invitation.company.label)
+    return jsonify({'status': 'OK'})
+
+
 @app.route("/products", methods=["POST"])
 def add_products():
     user = user_app.authenticate(session.get('email'))

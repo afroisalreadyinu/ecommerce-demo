@@ -71,6 +71,22 @@ def step_impl(context):
     """
     assert_that(context.response_data['recipient'], 'seconduser@comp.com')
 
+@behave.then('invitation can be used to sign up')
+def step_impl(context):
+    invitations = to_json(context.client.get('/invite'))
+    assert_that(len(invitations), equal_to(1))
+    nonce = invitations[0]['nonce']
+    email = invitations[0]['email']
+    response = context.client.get('/logout')
+    data = {'nonce': nonce, 'password': 'test'}
+    response = context.client.post_json('/signup-with-invitation', data)
+    assert_that(response.status_code, equal_to(200))
+    data = {'email': email, 'password': 'test'}
+    response = context.client.post_json('/login', data)
+    assert_that(response.status_code, equal_to(200))
+    json_response = to_json(response)
+    assert_that(json_response['email'], equal_to(email))
+
 # Product import etc
 
 @behave.given('the user is logged in')
