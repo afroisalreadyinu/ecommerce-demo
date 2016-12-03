@@ -43,6 +43,15 @@ def login():
     session['email'] = user.email
     return jsonify({"email":user.email})
 
+@app.route('/invite', methods=['POST'])
+def invite():
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
+    data = request.get_json()
+    company_app.invite_to_company(user, data['invitee_email'])
+    return jsonify({'status': 'OK'})
+
 @app.route("/products", methods=["POST"])
 def add_products():
     user = user_app.authenticate(session.get('email'))

@@ -55,6 +55,21 @@ def step_impl(context):
     json_response = to_json(response)
     assert_that(json_response['email'], equal_to(USER_EMAIL))
 
+@behave.when('the user posts the invite form')
+def step_impl(context):
+    data = {'invitee_email': 'seconduser@comp.com'}
+    response = context.client.post_json('/invite', data)
+    assert_that(response.status_code, equal_to(200))
+
+@behave.then('an invitation is sent')
+def step_impl(context):
+    """
+    Since sending emails is mocked, this step is empty, but it would
+    still be an interesting exercise to figure out how to check the
+    sending of emails at all.
+    """
+    pass
+
 # Product import etc
 
 @behave.given('the user is logged in')

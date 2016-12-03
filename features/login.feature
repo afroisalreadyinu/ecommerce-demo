@@ -14,3 +14,9 @@ Feature: Signup and login
      Given the user has logged out
       when the user posts the login form
       then the user is logged in
+
+  @wip
+  Scenario: Invite
+     Given the user is logged in
+      when the user posts the invite form
+      then an invitation is sent
