@@ -41,7 +41,7 @@ def login():
     if not user:
         abort(401)
     session['email'] = user.email
-    return jsonify({"email":user.email})
+    return jsonify({"email":user.email, "company":user.company.label})
 
 @app.route('/invite', methods=['POST'])
 def invite():

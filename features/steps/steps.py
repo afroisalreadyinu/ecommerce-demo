@@ -86,6 +86,7 @@ def step_impl(context):
     assert_that(response.status_code, equal_to(200))
     json_response = to_json(response)
     assert_that(json_response['email'], equal_to(email))
+    assert_that(json_response['company'], equal_to(USER_COMPANY))
 
 # Product import etc
 
