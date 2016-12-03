@@ -49,8 +49,8 @@ def invite():
     if not user:
         abort(401)
     data = request.get_json()
-    company_app.invite_to_company(user, data['invitee_email'])
-    return jsonify({'status': 'OK'})
+    invitation = company_app.invite_to_company(user, data['invitee_email'])
+    return jsonify({'recipient': invitation.recipient})
 
 @app.route("/products", methods=["POST"])
 def add_products():

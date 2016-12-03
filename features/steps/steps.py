@@ -60,15 +60,16 @@ def step_impl(context):
     data = {'invitee_email': 'seconduser@comp.com'}
     response = context.client.post_json('/invite', data)
     assert_that(response.status_code, equal_to(200))
+    context.response_data = to_json(response)
 
 @behave.then('an invitation is sent')
 def step_impl(context):
     """
-    Since sending emails is mocked, this step is empty, but it would
-    still be an interesting exercise to figure out how to check the
-    sending of emails at all.
+    Since sending emails is mocked, this step is oversimplified, but
+    it would still be an interesting exercise to figure out how to
+    check the sending of emails at all.
     """
-    pass
+    assert_that(context.response_data['recipient'], 'seconduser@comp.com')
 
 # Product import etc
 

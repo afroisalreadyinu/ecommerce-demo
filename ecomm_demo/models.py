@@ -33,6 +33,7 @@ class Company(db.Model, EcommerceModel):
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(), nullable=False)
 
+
 class Invitation(db.Model, EcommerceModel):
     __tablename__ = 'invitation'
     id = db.Column(db.Integer, primary_key=True)
@@ -48,6 +49,7 @@ class Invitation(db.Model, EcommerceModel):
         backref=db.backref('invitations', order_by=[email]),
         foreign_keys=[company_id],
     )
+
 
 class Product(db.Model, EcommerceModel):
     __tablename__ = 'product'
