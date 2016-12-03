@@ -48,6 +48,12 @@ class CompanyApplication:
     def get_invitations(self, company):
         return self.invitation_table.query.filter_by(company=company)
 
+    def get_by_nonce(self, nonce):
+        try:
+            return self.invitation_table.query.filter_by(nonce=nonce).one()
+        except exc.SQLAlchemyError:
+            return None
+
 class UserApplication:
 
     def __init__(self, user_table, company_app, security_context):
@@ -70,6 +76,7 @@ class UserApplication:
         except exc.SQLAlchemyError:
             raise UserApplicationError('User exists')
         return user
+
 
     def login(self, email, password):
         if any(x.strip() == '' for x in (email, password)):

@@ -167,3 +167,17 @@ class TestCompanyApplication(unittest.TestCase):
         invitations = list(app.get_invitations(company))
         self.assertEqual(len(invitations), 1)
         self.assertEqual(invitations[0].email, 'invitee1@x.com')
+
+    def test_get_invitation_by_nonce(self):
+        company = CompanyRow(label=VALID_COMPANY)
+        invitation_table = MockInvitationTable([
+            InvitationRow(email='invitee1@x.com', nonce='123', company=None),
+            InvitationRow(email='invitee2@y.com', nonce='456', company=None)
+        ])
+        app = CompanyApplication(MockCompanyTable(), invitation_table)
+        invitation = app.get_by_nonce('123')
+        self.assertEqual(invitation.email, 'invitee1@x.com')
+
+    def test_get_invitation_by_nonce_none_on_empty(self):
+        app = CompanyApplication(MockCompanyTable(), MockInvitationTable())
+        self.assertIsNone(app.get_by_nonce('123'))
