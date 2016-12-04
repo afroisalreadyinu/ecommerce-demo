@@ -66,3 +66,18 @@ class Product(db.Model, EcommerceModel):
         backref=db.backref('products', order_by=[id]),
         foreign_keys=[company_id],
     )
+
+class Storage(db.Model, EcommerceModel):
+    __tablename__ = 'storage'
+    id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String(), nullable=False)
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey('company.id', ondelete='RESTRICT'),
+        nullable=False,
+    )
+    company = db.relationship(
+        'Company',
+        backref=db.backref('storage_locations', order_by=[id]),
+        foreign_keys=[company_id],
+    )
