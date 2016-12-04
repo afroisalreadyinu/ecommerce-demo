@@ -1,4 +1,7 @@
+from collections import namedtuple
 from sqlalchemy import exc
+
+CompanyRow = namedtuple('CompanyRow', 'label')
 
 class ResultSet:
 

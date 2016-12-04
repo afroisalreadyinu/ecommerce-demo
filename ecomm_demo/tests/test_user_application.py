@@ -8,10 +8,9 @@ from ecomm_demo.user_application import (
     CompanyApplication,
     create_invitation_nonce
     )
-from common import MockTable
+from common import MockTable, CompanyRow
 
 UserRow = namedtuple('UserRow', 'email pw_hash company')
-CompanyRow = namedtuple('CompanyRow', 'label')
 InvitationRow = namedtuple('InvitationRow', 'nonce company email')
 
 VALID_EMAIL = 'goofy@acme.com'
