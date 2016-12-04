@@ -29,3 +29,6 @@ class StorageApplication:
         return self.storage_table.new_row(
             label=label, company=company, commit=commit
         )
+
+    def get_all_for_company(self, company):
+        return self.storage_table.query.filter_by(company=company)

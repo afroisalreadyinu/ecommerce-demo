@@ -2,7 +2,7 @@ import unittest
 from collections import namedtuple
 
 from ecomm_demo.product_application import ProductApplication, StorageApplication
-from common import MockTable
+from common import MockTable, CompanyRow
 
 GTIN = '00845982006196'
 ProductRow = namedtuple('UserRow', 'label gtin company')
@@ -40,3 +40,14 @@ class TestStorageApplication(unittest.TestCase):
         storage_app.new_storage_location('New location', 'Acme Inc')
         self.assertEqual(len(storage_table.existing), 1)
         self.assertEqual(storage_table.existing[0].label, 'New location')
+
+    def test_filter_by_company(self):
+        company = CompanyRow('Comp 1')
+        storage_table = MockStorageTable([
+            StorageRow(label='St1', company=company),
+            StorageRow(label='St2', company=CompanyRow('Comp 2'))
+        ])
+        storage_app = StorageApplication(storage_table)
+        storages = list(storage_app.get_all_for_company(company))
+        self.assertEqual(len(storages), 1)
+        self.assertEqual(storages[0].label, 'St1')
