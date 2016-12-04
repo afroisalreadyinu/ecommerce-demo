@@ -2,14 +2,15 @@ from flask import jsonify, request, session, abort
 from sqlalchemy import exc
 from passlib.apps import custom_app_context
 
-from .models import db, User, Product, Company, Invitation
+from .models import db, User, Product, Company, Invitation, Storage
 from .user_application import CompanyApplication, UserApplication, UserApplicationError
-from .product_application import ProductApplication
+from .product_application import ProductApplication, StorageApplication
 from .application import app
 
 company_app = CompanyApplication(Company, Invitation)
 user_app = UserApplication(User, company_app, custom_app_context)
 product_app = ProductApplication(Product)
+storage_app = StorageApplication(Storage)
 
 @app.route("/")
 def index():
@@ -90,3 +91,20 @@ def get_products():
         abort(401)
     products = product_app.get_products(user.company)
     return jsonify([p.to_dict() for p in products])
+
+@app.route("/storage", methods=["POST"])
+def new_storage():
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
+    data = request.get_json()
+    storage = storage_app.new_storage_location(data['label'], user.company)
+    return jsonify({'label': storage.label})
+
+@app.route("/storage", methods=["GET"])
+def list_storage_locations():
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
+    storages = storage_app.get_all_for_company(user.company)
+    return jsonify([{'id': x.id, 'label':x.label} for x in storages])

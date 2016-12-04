@@ -114,3 +114,21 @@ def step_impl(context):
     for product in json_response:
         product.pop('id')
         assert_that(product, is_in(context.products))
+
+STORE_NAME = 'Store on Friedrichstrasse'
+
+@behave.when('the user posts the new storage location form')
+def step_impl(context):
+    data = {'label': STORE_NAME}
+    response = context.client.post_json('/storage', data)
+    assert_that(response.status_code, equal_to(200))
+    context.storage = to_json(response)
+
+@behave.then('a new storage location is created')
+def step_impl(context):
+    assert_that(context.storage['label'], equal_to(STORE_NAME))
+    response = context.client.get('/storage')
+    assert_that(response.status_code, equal_to(200))
+    storages = to_json(response)
+    assert_that(len(storages), equal_to(1))
+    assert_that(storages[0]['label'], equal_to(STORE_NAME))
