@@ -27,7 +27,7 @@ are implemented. These are:
 All domains are extremely simplified (especially the last one, which
 is a hell of its own), but functional complexities are meant to be
 part of the application, to verify the effectiveness of test-driven
-design.
+design. For details on the features, see backlog.org.
 
 ### Users
 
@@ -36,8 +36,7 @@ they are kept to a minimum. A user can sign up and create a company at
 the same time. Every member of a company can add new users using an
 end point for this purpose. Authentication is also rather limited;
 it's based on setting a cookie, which means that you need a client
-with that capability for API scripts. Security is not the point of
-this demo.
+with that capability for API scripts.
 
 ### Product information & stock availability
 

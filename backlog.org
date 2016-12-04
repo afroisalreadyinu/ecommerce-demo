@@ -1,0 +1,44 @@
+* Login, company & user management
+
+- A user can signup and create a company at the same time. The user is
+  identified by the email address which cannot be changed.
+
+- A user can invite other users by email. When the new user signs up
+  with the invitation, she is identified with the invitation recipient
+  email address, and is a member of the same company as the inviter.
+
+- A user cannot change company.
+
+- The company is identified by a label, which has to be unique.
+
+* Product, stock & storage
+
+- A product is identified by a gtin and a label, and is bound to a
+  company.
+
+- A product is unique by gtin and company.
+
+- A product has three different kinds of stock per storage:
+  + Physical: The quantity in storage
+  + Sold: The quantity bound to orders that are paid
+  + Reserved: The quantity bound to orders that are not paid
+  + ATP: Availabel to purchase; Physical - (Sold + Reserved)
+
+- The only stock that can be changed for a product is that of
+  physical. The rest is changed based on the status of the orders
+  containing that product as item, and ATP as an aggregate of the
+  rest. Changing stock happens only based on deltas; it is not
+  possible to set absolute value for stock.
+
+* Orders
+
+- An order consists of an address, a list of order items, and payment
+  information.
+
+* Routing & shipments
+
+- TBW
+
+* Returns & Cancellation
+
+- TBW
