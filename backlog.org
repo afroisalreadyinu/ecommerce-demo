@@ -22,7 +22,12 @@
   + Physical: The quantity in storage
   + Sold: The quantity bound to orders that are paid
   + Reserved: The quantity bound to orders that are not paid
-  + ATP: Availabel to purchase; Physical - (Sold + Reserved)
+  + ATP: Available to purchase; Physical - (Sold + Reserved)
+
+- A product can be marked as 'virtual'. In this case, the physical
+  value is always one, and sold and reserved are always zero. This
+  value can be set for things like gift packaging or personalized
+  cards.
 
 - The only stock that can be changed for a product is that of
   physical. The rest is changed based on the status of the orders
@@ -32,13 +37,23 @@
 
 * Orders
 
-- An order consists of an address, a list of order items, and payment
-  information.
+- An order consists of an address, a list of order items, routing
+  status and payment status. Payment status can be one of processing,
+  captured, or rejected.
+
+- An order item consists of a reference to a product and quantity.
+
+- When an order is created, it is routed to one of the storage
+  locations. The stock value of the item that is routed then depends
+  on the payment status of the order. If it is processing, the items
+  are only reserved. If it is captured, they are sold.
+
+- An order item can be cancelled before it is shipped.
 
 * Routing & shipments
 
-- TBW
+- When an order is routed to a storage location, a logistic order is
+  created.
 
-* Returns & Cancellation
-
-- TBW
+- A logistic order item consists of a list of logistic order items and
+  shipment status.
