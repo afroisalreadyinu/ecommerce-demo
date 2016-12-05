@@ -1,9 +1,5 @@
 * TODO Build feature backlog
 
-* TODO Storage locations
-** TODO Add data model
-** TODO Add creation
-
 * TODO Creating stock
 ** TODO Domain action to create stock
 ** TODO Connect handlers
@@ -27,3 +23,10 @@
 
 * DONE Inviting user
   CLOSED: [2016-12-03 Sat 23:14]
+
+* DONE Storage locations
+  CLOSED: [2016-12-05 Mon 10:03]
+** DONE Add data model
+   CLOSED: [2016-12-05 Mon 10:03]
+** DONE Add creation
+   CLOSED: [2016-12-05 Mon 10:03]

@@ -39,7 +39,7 @@
 
 - An order consists of an address, a list of order items, routing
   status and payment status. Payment status can be one of processing,
-  captured, or rejected.
+  captured, rejected, or overpaid.
 
 - An order item consists of a reference to a product and quantity.
 
@@ -50,10 +50,25 @@
 
 - An order item can be cancelled before it is shipped.
 
+- The reserved quantity changes based on order status. When an item is
+  cancelled, the quantity cancelled goes from reserved to
+  physical. When the payment is captured, it goes from reserved to
+  sold.
+
+- Sold quantity changes based on logistic order shipment status. When
+  an order is shipped, the shipped quantity is removed from the sold
+  quantity in that storage location.
+
 * Routing & shipments
 
-- When an order is routed to a storage location, a logistic order is
-  created.
+- Routing is the process of assigning an order to one or more storage locations.
 
-- A logistic order item consists of a list of logistic order items and
+- When an order is routed to a storage location, a logistic order is
+  created for that location.
+
+- A logistic order item consists of a list of items, address data and
   shipment status.
+
+- A shipment consists of a list of shipment items, shipment provider,
+  tracking id and shipment status. This status can be one of
+  unprocessed, processing, packed, shipped, delivered or failed.
