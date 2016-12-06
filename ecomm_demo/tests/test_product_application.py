@@ -1,12 +1,18 @@
 import unittest
 from collections import namedtuple
+from sqlalchemy import exc
 
 from ecomm_demo.product_application import ProductApplication, StorageApplication
 from common import MockTable, CompanyRow
 
 GTIN = '00845982006196'
 ProductRow = namedtuple('UserRow', 'label gtin company')
-StorageRow = namedtuple('StorageRow', 'label company')
+
+class StorageRow:
+    def __init__(self, company, label, id=None):
+        self.company = company
+        self.label = label
+        self.id = id
 
 class MockProductTable(MockTable):
     ROW_CLASS = ProductRow
@@ -44,10 +50,30 @@ class TestStorageApplication(unittest.TestCase):
     def test_filter_by_company(self):
         company = CompanyRow('Comp 1')
         storage_table = MockStorageTable([
-            StorageRow(label='St1', company=company),
-            StorageRow(label='St2', company=CompanyRow('Comp 2'))
+            StorageRow(label='St1', company=company, id=1),
+            StorageRow(label='St2', company=CompanyRow('Comp 2'), id=2)
         ])
         storage_app = StorageApplication(storage_table)
         storages = list(storage_app.get_all_for_company(company))
         self.assertEqual(len(storages), 1)
         self.assertEqual(storages[0].label, 'St1')
+
+    def test_get_by_id_and_company(self):
+        company = CompanyRow('Comp 1')
+        storage_table = MockStorageTable([
+            StorageRow(label='St1', company=company, id=1),
+            StorageRow(label='St2', company=CompanyRow('Comp 2'), id=2)
+        ])
+        storage_app = StorageApplication(storage_table)
+        storage = storage_app.get_for_company(company, 1)
+        self.assertEqual(storage.label, 'St1')
+
+    def test_get_by_id_and_company_invalid(self):
+        company = CompanyRow('Comp 1')
+        storage_table = MockStorageTable([
+            StorageRow(label='St1', company=company, id=1),
+            StorageRow(label='St2', company=CompanyRow('Comp 2'), id=2)
+        ])
+        storage_app = StorageApplication(storage_table)
+        with self.assertRaises(exc.SQLAlchemyError):
+            storage = storage_app.get_for_company(company, 2)
