@@ -1,12 +1,14 @@
 class ProductLogic:
 
-    def __init__(self, product):
+    def __init__(self, product, stock):
         self.product = product
+        self.stock = stock
 
     def to_dict(self):
         return {'id': self.product.id,
                 'label': self.product.label,
-                'gtin': self.product.gtin}
+                'gtin': self.product.gtin,
+                'stock': self.stock}
 
 class ProductApplication:
 
@@ -18,8 +20,9 @@ class ProductApplication:
                                   company=company, commit=commit)
 
     def get_products(self, company):
+        no_stock_dict = {'physical': 0, 'atp': 0, 'sold': 0, 'reserved': 0}
         for x in self.table.query.filter_by(company=company):
-            yield ProductLogic(x)
+            yield ProductLogic(x, no_stock_dict)
 
 class StorageApplication:
     def __init__(self, storage_table):

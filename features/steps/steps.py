@@ -111,8 +111,11 @@ def step_impl(context):
     assert_that(response.status_code, equal_to(200))
     json_response = to_json(response)
     assert_that(len(json_response), equal_to(len(context.products)))
+    no_stock = {'physical': 0, 'sold': 0, 'reserved': 0, 'atp': 0}
     for product in json_response:
         product.pop('id')
+        stock = product.pop('stock')
+        assert_that(stock, equal_to(no_stock))
         assert_that(product, is_in(context.products))
 
 STORE_NAME = 'Store on Friedrichstrasse'
