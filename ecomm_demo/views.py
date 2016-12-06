@@ -99,7 +99,7 @@ def new_storage():
         abort(401)
     data = request.get_json()
     storage = storage_app.new_storage_location(data['label'], user.company)
-    return jsonify({'label': storage.label})
+    return jsonify({'label': storage.label, 'id': storage.id})
 
 @app.route("/storage", methods=["GET"])
 def list_storage_locations():

@@ -135,3 +135,25 @@ def step_impl(context):
     storages = to_json(response)
     assert_that(len(storages), equal_to(1))
     assert_that(storages[0]['label'], equal_to(STORE_NAME))
+
+@behave.given('a product is imported')
+def step_impl(context):
+    products = [x.as_dict() for x in context.table.rows]
+    context.client.post_json('/products', products)
+
+@behave.given('storage location exists')
+def step_impl(context):
+    storages = to_json(context.client.get('/storage'))
+    if storages:
+        context.storage_location_id = storages[0]['id']
+    else:
+        storage = to_json(context.client.post_json(
+            '/storage', {'label': STORE_NAME}))
+        context.storage_location_id = storage['id']
+
+@behave.when('the user posts inventory to stock intake')
+def step_impl(context):
+    intakes = [x.as_dict() for x in context.table.rows]
+    storage_path = '/storage/{}/intake'.format(context.storage_location_id)
+    response = context.client.post_json(storage_path, intakes)
+    assert_that(response.status_code, equal_to(200))
