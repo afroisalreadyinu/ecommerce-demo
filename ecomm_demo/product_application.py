@@ -1,3 +1,6 @@
+from sqlalchemy import exc
+
+
 class ProductLogic:
 
     def __init__(self, product, stock):
@@ -27,9 +30,17 @@ class ProductApplication:
             yield ProductLogic(x, no_stock_dict)
 
     def intake_for_product(self, storage_location, product, intake_value):
-        stock_row = self.stock_table.filter_by(
-            storage=storage_location,
-            product=product)
+        try:
+            stock_row = self.stock_table.filter_by(
+                storage=storage_location,
+                product=product).one()
+        except exc.SQLAlchemyError:
+            stock_row = self.stock_table.new_row(
+                storage=storage_location,
+                product=product,
+                physical=intake_value
+            )
+        return ProductLogic(product, stock_row)
 
 
     def intake_for_products(self, storage_location, product_intake_list):

@@ -50,9 +50,10 @@ class TestProductApplication(unittest.TestCase):
         )
         company = CompanyRow('puma')
         storage_location = StorageRow(company=company, label='Shop 1')
-        result = app.intake_for_product(storage_location, existing_products, 2)
-        self.assertEqual(result.gtin, GTIN)
+        result = app.intake_for_product(storage_location, existing_products[0], 2)
+        self.assertEqual(result.product.gtin, GTIN)
         self.assertEqual(result.stock.physical, 2)
+
 
 class TestStorageApplication(unittest.TestCase):
 
