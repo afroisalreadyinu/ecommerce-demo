@@ -40,6 +40,8 @@ class ProductApplication:
                 product=product,
                 physical=intake_value
             )
+        else:
+            stock_row.physical += intake_value
         return ProductLogic(product, stock_row)
 
 

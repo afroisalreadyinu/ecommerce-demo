@@ -14,7 +14,11 @@ class StorageRow:
         self.label = label
         self.id = id
 
-StockRow = namedtuple('StockRow', 'storage product physical')
+class StockRow:
+    def __init__(self, storage, product, physical):
+        self.storage = storage
+        self.product = product
+        self.physical = physical
 
 class MockProductTable(MockTable):
     ROW_CLASS = ProductRow
@@ -53,6 +57,21 @@ class TestProductApplication(unittest.TestCase):
         result = app.intake_for_product(storage_location, existing_products[0], 2)
         self.assertEqual(result.product.gtin, GTIN)
         self.assertEqual(result.stock.physical, 2)
+
+    def test_intake_for_product_stock_exists(self):
+        company = CompanyRow('puma')
+        existing_products = [ProductRow(label='test', gtin=GTIN, company=company)]
+        storage_location = StorageRow(company=company, label='Shop 1')
+        existing_stock = [StockRow(
+            product=existing_products[0], storage=storage_location, physical=3
+        )]
+        app = ProductApplication(
+            MockProductTable(existing=existing_products),
+            MockStockTable(existing_stock)
+        )
+        result = app.intake_for_product(storage_location, existing_products[0], 2)
+        self.assertEqual(result.product.gtin, GTIN)
+        self.assertEqual(result.stock.physical, 5)
 
 
 class TestStorageApplication(unittest.TestCase):
