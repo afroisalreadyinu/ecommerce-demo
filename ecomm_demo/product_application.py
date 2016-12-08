@@ -24,6 +24,9 @@ class ProductApplication:
         for x in self.table.query.filter_by(company=company):
             yield ProductLogic(x, no_stock_dict)
 
+    def intake_for_products(self, storage_location, product_intake_list):
+        return []
+
 class StorageApplication:
     def __init__(self, storage_table):
         self.storage_table = storage_table

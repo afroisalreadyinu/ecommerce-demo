@@ -37,6 +37,15 @@ class TestProductApplication(unittest.TestCase):
         products = app.get_products('puma')
         self.assertEqual(len(list(products)), 1)
 
+    def test_intake_for_product_no_initial_stock(self):
+        existing = [ProductRow(label='test', gtin=GTIN, company='puma')]
+        app = ProductApplication(MockProductTable(existing=existing))
+        product_intake_list = [{'gtin': GTIN, 'intake': 2}]
+        company = CompanyRow('puma')
+        storage_location = StorageRow(company=company, label='Shop 1')
+        result = app.intake_for_products(storage_location, product_intake_list)
+        self.assertEqual(len(result), 1)
+
 
 class TestStorageApplication(unittest.TestCase):
 
