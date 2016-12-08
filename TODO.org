@@ -3,6 +3,9 @@
 * TODO Creating stock
 ** TODO Domain action to create stock
 ** TODO Connect handlers
+** TODO Using attrs for non-namedtupe db rows
+** TODO Transaction and locking for stock rows
+
 
 * TODO Creating orders
 ** TODO Model
