@@ -12,8 +12,9 @@ class ProductLogic:
 
 class ProductApplication:
 
-    def __init__(self, product_table):
+    def __init__(self, product_table, stock_table):
         self.product_table = product_table
+        self.stock_table = stock_table
 
     def add_product(self, label, gtin, company, commit=False):
         return self.product_table.new_row(
@@ -25,7 +26,19 @@ class ProductApplication:
         for x in self.product_table.query.filter_by(company=company):
             yield ProductLogic(x, no_stock_dict)
 
+    def intake_for_product(self, storage_location, product, intake_value):
+        stock_row = self.stock_table.filter_by(
+            storage=storage_location,
+            product=product)
+
+
     def intake_for_products(self, storage_location, product_intake_list):
+        for intake_entry in product_intake_list:
+            product = self.product_table.filter_by(
+                company=storage_location.company,
+                gtin=intake_entry['gtin']
+                )
+            self.intake_for_product(storage_location, product, intake_entry['intake'])
         return []
 
 class StorageApplication:

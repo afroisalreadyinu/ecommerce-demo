@@ -14,17 +14,22 @@ class StorageRow:
         self.label = label
         self.id = id
 
+StockRow = namedtuple('StockRow', 'storage product physical')
+
 class MockProductTable(MockTable):
     ROW_CLASS = ProductRow
 
 class MockStorageTable(MockTable):
     ROW_CLASS = StorageRow
 
+class MockStockTable(MockTable):
+    ROW_CLASS = StockRow
+
 class TestProductApplication(unittest.TestCase):
 
     def test_create_product(self):
         product_table = MockProductTable()
-        app = ProductApplication(product_table)
+        app = ProductApplication(product_table, MockStockTable())
         product = app.add_product(label='A label', gtin=GTIN, company='puma')
         self.assertEqual(product.label, 'A label')
         self.assertEqual(len(product_table.existing), 1)
@@ -33,19 +38,21 @@ class TestProductApplication(unittest.TestCase):
 
     def test_query_products(self):
         existing = [ProductRow(label='test', gtin=GTIN, company='puma')]
-        app = ProductApplication(MockProductTable(existing=existing))
+        app = ProductApplication(MockProductTable(existing=existing), MockStockTable())
         products = app.get_products('puma')
         self.assertEqual(len(list(products)), 1)
 
     def test_intake_for_product_no_initial_stock(self):
-        existing = [ProductRow(label='test', gtin=GTIN, company='puma')]
-        app = ProductApplication(MockProductTable(existing=existing))
-        product_intake_list = [{'gtin': GTIN, 'intake': 2}]
+        existing_products = [ProductRow(label='test', gtin=GTIN, company='puma')]
+        app = ProductApplication(
+            MockProductTable(existing=existing_products),
+            MockStockTable()
+        )
         company = CompanyRow('puma')
         storage_location = StorageRow(company=company, label='Shop 1')
-        result = app.intake_for_products(storage_location, product_intake_list)
-        self.assertEqual(len(result), 1)
-
+        result = app.intake_for_product(storage_location, existing_products, 2)
+        self.assertEqual(result.gtin, GTIN)
+        self.assertEqual(result.stock.physical, 2)
 
 class TestStorageApplication(unittest.TestCase):
 
