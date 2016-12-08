@@ -108,3 +108,13 @@ def list_storage_locations():
         abort(401)
     storages = storage_app.get_all_for_company(user.company)
     return jsonify([{'id': x.id, 'label':x.label} for x in storages])
+
+@app.route("/storage/<storage_id>/intake", methods=['POST'])
+def stock_intake(storage_id):
+    user = user_app.authenticate(session.get('email'))
+    if not user:
+        abort(401)
+    data = request.get_json()
+    storage = storage_app.get_for_company(user.company, storage_id)
+    new_stocks = product_app.intake_for_products(storage, data)
+    return jsonify(new_stocks)
