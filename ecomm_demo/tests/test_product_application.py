@@ -15,7 +15,7 @@ class StorageRow:
         self.id = id
 
 class StockRow:
-    def __init__(self, storage, product, physical):
+    def __init__(self, storage, product, physical=0):
         self.storage = storage
         self.product = product
         self.physical = physical
@@ -72,6 +72,7 @@ class TestProductApplication(unittest.TestCase):
         result = app.intake_for_product(storage_location, existing_products[0], 2)
         self.assertEqual(result.product.gtin, GTIN)
         self.assertEqual(result.stock.physical, 5)
+
 
 
 class TestStorageApplication(unittest.TestCase):

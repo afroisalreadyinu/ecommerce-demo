@@ -29,30 +29,29 @@ class ProductApplication:
         for x in self.product_table.query.filter_by(company=company):
             yield ProductLogic(x, no_stock_dict)
 
-    def intake_for_product(self, storage_location, product, intake_value):
+    def get_or_create(self, table, **fields):
         try:
-            stock_row = self.stock_table.filter_by(
-                storage=storage_location,
-                product=product).one()
+            row = table.filter_by(**fields).one()
         except exc.SQLAlchemyError:
-            stock_row = self.stock_table.new_row(
-                storage=storage_location,
-                product=product,
-                physical=intake_value
-            )
-        else:
-            stock_row.physical += intake_value
+            row = table.new_row(**fields)
+        return row
+
+    def intake_for_product(self, storage_location, product, intake_value):
+        stock_row = self.get_or_create(
+            self.stock_table, storage=storage_location, product=product)
+        stock_row.physical += intake_value
         return ProductLogic(product, stock_row)
 
-
     def intake_for_products(self, storage_location, product_intake_list):
+        results = []
         for intake_entry in product_intake_list:
             product = self.product_table.filter_by(
                 company=storage_location.company,
                 gtin=intake_entry['gtin']
-                )
-            self.intake_for_product(storage_location, product, intake_entry['intake'])
-        return []
+                ).one_or_none()
+            results.append(self.intake_for_product(storage_location, product, intake_entry['intake']))
+        return
+
 
 class StorageApplication:
     def __init__(self, storage_table):
