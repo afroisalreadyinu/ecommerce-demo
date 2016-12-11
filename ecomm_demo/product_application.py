@@ -31,7 +31,7 @@ class ProductApplication:
 
     def get_or_create(self, table, **fields):
         try:
-            row = table.filter_by(**fields).one()
+            row = table.query.filter_by(**fields).one()
         except exc.SQLAlchemyError:
             row = table.new_row(**fields)
         return row

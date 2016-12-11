@@ -154,6 +154,8 @@ def step_impl(context):
 @behave.when('the user posts inventory to stock intake')
 def step_impl(context):
     intakes = [x.as_dict() for x in context.table.rows]
+    for intake in intakes:
+        intake['intake'] = int(intake['intake'])
     storage_path = '/storage/{}/intake'.format(context.storage_location_id)
     response = context.client.post_json(storage_path, intakes)
     assert_that(response.status_code, equal_to(200))
