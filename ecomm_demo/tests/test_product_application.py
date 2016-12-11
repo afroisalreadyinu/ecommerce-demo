@@ -6,6 +6,7 @@ from ecomm_demo.product_application import ProductApplication, StorageApplicatio
 from common import MockTable, CompanyRow
 
 GTIN = '00845982006196'
+GTIN_2 = '00845982006875'
 ProductRow = namedtuple('UserRow', 'label gtin company')
 
 class StorageRow:
@@ -65,6 +66,25 @@ class TestProductApplication(unittest.TestCase):
         self.assertEqual(result.product.gtin, product.gtin)
         self.assertEqual(result.stock.physical, 5)
 
+    def test_intake_for_product_list(self):
+        company = CompanyRow('puma')
+        products = [ProductRow(label='test', gtin=GTIN, company=company),
+                    ProductRow(label='other test', gtin=GTIN_2, company=company)]
+        storage_location = StorageRow(company=company, label='Shop 1')
+        existing_stock = [
+            StockRow(product=products[0], storage=storage_location, physical=3),
+        ]
+        app = ProductApplication(MockProductTable(products),
+                                 MockStockTable(existing_stock))
+        intake_list = [
+            {'gtin': GTIN, 'intake': 2},
+            {'gtin': GTIN_2, 'intake': 5},
+            {'gtin': 'blahblah', 'intake': 5}
+        ]
+        result = app.intake_for_product_list(storage_location, intake_list)
+        self.assertEqual(result['errors'][0]['error'], 'No such product')
+        self.assertEqual(result['errors'][0]['gtin'], 'blahblah')
+        self.assertEqual(len(result['intakes']), 2)
 
 
 class TestStorageApplication(unittest.TestCase):

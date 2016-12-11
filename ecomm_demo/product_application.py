@@ -42,15 +42,20 @@ class ProductApplication:
         stock_row.physical += intake_value
         return ProductLogic(product, stock_row)
 
-    def intake_for_products(self, storage_location, product_intake_list):
+    def intake_for_product_list(self, storage_location, product_intake_list):
         results = []
+        errors = []
         for intake_entry in product_intake_list:
-            product = self.product_table.query.filter_by(
-                company=storage_location.company,
-                gtin=intake_entry['gtin']
-                ).one_or_none()
-            results.append(self.intake_for_product(storage_location, product, intake_entry['intake']))
-        return results
+            try:
+                product = self.product_table.query.filter_by(
+                    company=storage_location.company,
+                    gtin=intake_entry['gtin']
+                ).one()
+            except exc.SQLAlchemyError:
+                errors.append({'gtin': intake_entry['gtin'], 'error': 'No such product'})
+            else:
+                results.append(self.intake_for_product(storage_location, product, intake_entry['intake']))
+        return {'intakes': results, 'errors': errors}
 
 
 class StorageApplication:
