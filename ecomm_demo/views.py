@@ -6,11 +6,14 @@ from .models import db, User, Product, Company, Invitation, Storage
 from .user_application import CompanyApplication, UserApplication, UserApplicationError
 from .product_application import ProductApplication, StorageApplication
 from .application import app
+from .permissions import make_logged_in
 
 company_app = CompanyApplication(Company, Invitation)
 user_app = UserApplication(User, company_app, custom_app_context)
-product_app = ProductApplication(Product)
+product_app = ProductApplication(Product, None)
 storage_app = StorageApplication(Storage)
+
+logged_in = make_logged_in(user_app, session)
 
 @app.route("/")
 def index():
@@ -45,19 +48,15 @@ def login():
     return jsonify({"email":user.email, "company":user.company.label})
 
 @app.route('/invite', methods=['POST'])
-def invite():
-    user = user_app.authenticate(session.get('email'))
-    if not user:
-        abort(401)
+@logged_in
+def invite(user):
     data = request.get_json()
     invitation = company_app.invite_to_company(user, data['invitee_email'])
     return jsonify({'recipient': invitation.recipient})
 
 @app.route('/invite', methods=['GET'])
-def get_invitations():
-    user = user_app.authenticate(session.get('email'))
-    if not user:
-        abort(401)
+@logged_in
+def get_invitations(user):
     invitations = [{'email':i.email, 'nonce':i.nonce}
                    for i in company_app.get_invitations(user.company)]
     return jsonify(invitations)
@@ -75,17 +74,16 @@ def signup_with_invitation():
 
 
 @app.route("/products", methods=["POST"])
-def add_products():
-    user = user_app.authenticate(session.get('email'))
-    if not user:
-        abort(401)
+@logged_in
+def add_products(user):
     data = request.get_json()
     for product in data:
         new_product = product_app.add_product(commit=True, company=user.company, **product)
     return jsonify({"status": "ok"})
 
 @app.route("/products", methods=["GET"])
-def get_products():
+@logged_in
+def get_products(user):
     user = user_app.authenticate(session.get('email'))
     if not user:
         abort(401)
@@ -93,28 +91,24 @@ def get_products():
     return jsonify([p.to_dict() for p in products])
 
 @app.route("/storage", methods=["POST"])
-def new_storage():
-    user = user_app.authenticate(session.get('email'))
-    if not user:
-        abort(401)
+@logged_in
+def new_storage(user):
     data = request.get_json()
     storage = storage_app.new_storage_location(data['label'], user.company)
     return jsonify({'label': storage.label, 'id': storage.id})
 
 @app.route("/storage", methods=["GET"])
-def list_storage_locations():
-    user = user_app.authenticate(session.get('email'))
-    if not user:
-        abort(401)
+@logged_in
+def list_storage_locations(user):
     storages = storage_app.get_all_for_company(user.company)
     return jsonify([{'id': x.id, 'label':x.label} for x in storages])
 
 @app.route("/storage/<storage_id>/intake", methods=['POST'])
-def stock_intake(storage_id):
-    user = user_app.authenticate(session.get('email'))
-    if not user:
-        abort(401)
+@logged_in
+def stock_intake(user, storage_id):
     data = request.get_json()
     storage = storage_app.get_for_company(user.company, storage_id)
+    if not storage:
+        abort(404)
     new_stocks = product_app.intake_for_products(storage, data)
     return jsonify(new_stocks)
