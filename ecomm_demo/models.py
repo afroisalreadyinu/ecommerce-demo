@@ -81,3 +81,37 @@ class Storage(db.Model, EcommerceModel):
         backref=db.backref('storage_locations', order_by=[id]),
         foreign_keys=[company_id],
     )
+
+class Stock(db.Model, EcommerceModel):
+    __tablename__ = 'stock'
+    id = db.Column(db.Integer, primary_key=True)
+    physical = db.Column(db.Integer, default=0, nullable=False)
+    sold = db.Column(db.Integer, default=0, nullable=False)
+    reserved = db.Column(db.Integer, default=0, nullable=False)
+    storage_id = db.Column(
+        db.Integer,
+        db.ForeignKey('storage.id', ondelete='RESTRICT'),
+        nullable=False,
+    )
+    storage = db.relationship(
+        'Storage',
+        backref=db.backref('stocks', order_by=[id]),
+        foreign_keys=[storage_id],
+    )
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey('product.id', ondelete='RESTRICT'),
+        nullable=False,
+    )
+    product = db.relationship(
+        'Product',
+        backref=db.backref('stocks', order_by=[id]),
+        foreign_keys=[product_id],
+    )
+
+    @classmethod
+    def new_row(cls, **kwargs):
+        kwargs.setdefault('physical', 0)
+        kwargs.setdefault('sold', 0)
+        kwargs.setdefault('reserved', 0)
+        return super().new_row(**kwargs)

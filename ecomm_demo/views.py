@@ -2,7 +2,7 @@ from flask import jsonify, request, session, abort
 from sqlalchemy import exc
 from passlib.apps import custom_app_context
 
-from .models import db, User, Product, Company, Invitation, Storage
+from .models import db, User, Product, Company, Invitation, Storage, Stock
 from .user_application import CompanyApplication, UserApplication, UserApplicationError
 from .product_application import ProductApplication, StorageApplication
 from .application import app
@@ -10,7 +10,7 @@ from .permissions import make_logged_in
 
 company_app = CompanyApplication(Company, Invitation)
 user_app = UserApplication(User, company_app, custom_app_context)
-product_app = ProductApplication(Product, None)
+product_app = ProductApplication(Product, Stock)
 storage_app = StorageApplication(Storage)
 
 logged_in = make_logged_in(user_app, session)
@@ -110,5 +110,5 @@ def stock_intake(user, storage_id):
     storage = storage_app.get_for_company(user.company, storage_id)
     if not storage:
         abort(404)
-    new_stocks = product_app.intake_for_products(storage, data)
+    new_stocks = product_app.intake_for_product_list(storage, data)
     return jsonify(new_stocks)
