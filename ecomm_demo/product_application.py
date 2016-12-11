@@ -45,12 +45,12 @@ class ProductApplication:
     def intake_for_products(self, storage_location, product_intake_list):
         results = []
         for intake_entry in product_intake_list:
-            product = self.product_table.filter_by(
+            product = self.product_table.query.filter_by(
                 company=storage_location.company,
                 gtin=intake_entry['gtin']
                 ).one_or_none()
             results.append(self.intake_for_product(storage_location, product, intake_entry['intake']))
-        return
+        return results
 
 
 class StorageApplication:

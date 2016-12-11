@@ -47,30 +47,22 @@ class TestProductApplication(unittest.TestCase):
         self.assertEqual(len(list(products)), 1)
 
     def test_intake_for_product_no_initial_stock(self):
-        existing_products = [ProductRow(label='test', gtin=GTIN, company='puma')]
-        app = ProductApplication(
-            MockProductTable(existing=existing_products),
-            MockStockTable()
-        )
+        app = ProductApplication(None, MockStockTable())
         company = CompanyRow('puma')
         storage_location = StorageRow(company=company, label='Shop 1')
-        result = app.intake_for_product(storage_location, existing_products[0], 2)
-        self.assertEqual(result.product.gtin, GTIN)
+        product = ProductRow(label='test', gtin=GTIN, company='puma')
+        result = app.intake_for_product(storage_location, product, 2)
+        self.assertEqual(result.product.gtin, product.gtin)
         self.assertEqual(result.stock.physical, 2)
 
     def test_intake_for_product_stock_exists(self):
         company = CompanyRow('puma')
-        existing_products = [ProductRow(label='test', gtin=GTIN, company=company)]
+        product = ProductRow(label='test', gtin=GTIN, company=company)
         storage_location = StorageRow(company=company, label='Shop 1')
-        existing_stock = [StockRow(
-            product=existing_products[0], storage=storage_location, physical=3
-        )]
-        app = ProductApplication(
-            MockProductTable(existing=existing_products),
-            MockStockTable(existing_stock)
-        )
-        result = app.intake_for_product(storage_location, existing_products[0], 2)
-        self.assertEqual(result.product.gtin, GTIN)
+        existing_stock = [StockRow(product=product, storage=storage_location, physical=3)]
+        app = ProductApplication(None, MockStockTable(existing_stock))
+        result = app.intake_for_product(storage_location, product, 2)
+        self.assertEqual(result.product.gtin, product.gtin)
         self.assertEqual(result.stock.physical, 5)
 
 
