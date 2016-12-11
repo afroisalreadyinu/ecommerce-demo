@@ -1,6 +1,7 @@
 from collections import namedtuple
 from sqlalchemy import exc
 
+UserRow = namedtuple('UserRow', 'email pw_hash company')
 CompanyRow = namedtuple('CompanyRow', 'label')
 
 class ResultSet:
@@ -36,3 +37,20 @@ class MockTable:
         results = [x for x in self.existing
                    if all(getattr(x, attr) == val for attr,val in filters.items())]
         return ResultSet(results)
+
+class MockUserTable(MockTable):
+    ROW_CLASS = UserRow
+
+class MockCompanyTable(MockTable):
+    ROW_CLASS = CompanyRow
+
+class MockSecurityContext:
+
+    def __init__(self, fail=False):
+        self.fail = fail
+
+    def encrypt(self, password):
+        return 'encrypted'
+
+    def verify(self, password, hash):
+        return not self.fail

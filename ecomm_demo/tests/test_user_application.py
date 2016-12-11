@@ -8,34 +8,18 @@ from ecomm_demo.user_application import (
     CompanyApplication,
     create_invitation_nonce
     )
-from common import MockTable, CompanyRow
+from common import (
+    MockTable, MockUserTable, MockCompanyTable,
+    MockSecurityContext, UserRow, CompanyRow)
 
-UserRow = namedtuple('UserRow', 'email pw_hash company')
 InvitationRow = namedtuple('InvitationRow', 'nonce company email')
 
 VALID_EMAIL = 'goofy@acme.com'
 VALID_PASS = 'testpass'
 VALID_COMPANY = 'Acme Inc'
 
-class MockUserTable(MockTable):
-    ROW_CLASS = UserRow
-
-class MockCompanyTable(MockTable):
-    ROW_CLASS = CompanyRow
-
 class MockInvitationTable(MockTable):
     ROW_CLASS = InvitationRow
-
-class MockSecurityContext:
-
-    def __init__(self, fail=False):
-        self.fail = fail
-
-    def encrypt(self, password):
-        return 'encrypted'
-
-    def verify(self, password, hash):
-        return not self.fail
 
 
 class TestuserApplication(unittest.TestCase):
