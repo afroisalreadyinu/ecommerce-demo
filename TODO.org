@@ -1,11 +1,8 @@
 * TODO Build feature backlog
 
-* TODO Creating stock
-** TODO Domain action to create stock
-** TODO Connect handlers
-** TODO Using attrs for non-namedtupe db rows
-** TODO Transaction and locking for stock rows
+* TODO Global stock for products
 
+* TODO Transaction handling
 
 * TODO Creating orders
 ** TODO Model
@@ -33,3 +30,12 @@
    CLOSED: [2016-12-05 Mon 10:03]
 ** DONE Add creation
    CLOSED: [2016-12-05 Mon 10:03]
+
+* DONE Creating stock
+  CLOSED: [2016-12-12 Mon 12:26]
+** DONE Domain action to create stock
+   CLOSED: [2016-12-12 Mon 12:26]
+** DONE Connect handlers
+   CLOSED: [2016-12-12 Mon 12:26]
+** DONE Using attrs for non-namedtupe db rows
+   CLOSED: [2016-12-12 Mon 12:26]
