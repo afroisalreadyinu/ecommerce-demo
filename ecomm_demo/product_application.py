@@ -63,7 +63,7 @@ class ProductApplication:
         stock_row = self.get_or_create(
             self.stock_table, storage=storage_location, product=product)
         stock_row.physical += intake_value
-        return ProductLogic(product, stock_row)
+        return ProductLogic(product, StockLogic(stock_row))
 
     def intake_for_product_list(self, storage_location, product_intake_list):
         results = []
@@ -83,7 +83,7 @@ class ProductApplication:
 
     def stock_for_storage(self, storage):
         for stock in self.stock_table.query.filter_by(storage=storage):
-            yield ProductLogic(stock.product, stock)
+            yield ProductLogic(stock.product, StockLogic(stock))
 
 
 class StorageApplication:
