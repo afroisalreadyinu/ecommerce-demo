@@ -156,6 +156,17 @@ def step_impl(context):
     intakes = [x.as_dict() for x in context.table.rows]
     for intake in intakes:
         intake['intake'] = int(intake['intake'])
-    storage_path = '/storage/{}/intake'.format(context.storage_location_id)
+    context.intakes = intakes
+    storage_path = '/storage/{}/stock'.format(context.storage_location_id)
     response = context.client.post_json(storage_path, intakes)
     assert_that(response.status_code, equal_to(200))
+
+@behave.then('the stock value is increased')
+def step_impl(context):
+    resp = context.client.get('/storage/{}/stock'.format(context.storage_location_id))
+    assert_that(resp.status_code, equal_to(200))
+    stock = to_json(resp)
+    assert_that(len(stock), 1)
+    assert_that(stock[0]['stock']['physical'], equal_to(context.intakes[0]['intake']))
+    assert_that(stock[0]['stock']['sold'], equal_to(0))
+    assert_that(stock[0]['stock']['reserved'], equal_to(0))
