@@ -1,6 +1,7 @@
 from flask import jsonify, request, session, abort
 from sqlalchemy import exc
 from passlib.apps import custom_app_context
+from json import JSONEncoder
 
 from .models import db, User, Product, Company, Invitation, Storage, Stock
 from .user_application import CompanyApplication, UserApplication, UserApplicationError
@@ -14,6 +15,14 @@ product_app = ProductApplication(Product, Stock)
 storage_app = StorageApplication(Storage)
 
 logged_in = make_logged_in(user_app, session)
+
+class CustomEncoder(JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        return super().default(obj)
+
+app.json_encoder = CustomEncoder
 
 @app.route("/")
 def index():
