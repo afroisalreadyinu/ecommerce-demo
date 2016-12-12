@@ -1,4 +1,5 @@
 from sqlalchemy import exc
+from neobunch import Bunch
 
 
 class ProductLogic:
@@ -8,13 +9,33 @@ class ProductLogic:
         self.stock = stock
 
     def to_dict(self):
-        stock_dict = {'physical': self.stock.physical,
-                      'sold': self.stock.sold,
-                      'reserved': self.stock.reserved}
         return {'id': self.product.id,
                 'label': self.product.label,
                 'gtin': self.product.gtin,
-                'stock': stock_dict}
+                'stock': self.stock}
+
+class StockLogic:
+    REPLICATED_FIELDS = ['physical', 'sold', 'reserved']
+    def __init__(self, stock_row):
+        self.stock = stock_row
+
+    @property
+    def atp(self):
+        return self.stock.physical - (self.stock.sold + self.stock.reserved)
+
+    def __getattr__(self, attr):
+        if attr in self.REPLICATED_FIELDS:
+            return getattr(self.stock, attr)
+        raise AttributeError()
+
+    @classmethod
+    def null_stock(cls):
+        zero_value = Bunch(physical=0, sold=0, reserved=0)
+        return StockLogic(zero_value)
+
+    def to_dict(self):
+        fields = self.REPLICATED_FIELDS + ['atp']
+        return {field:getattr(self, field) for field in fields}
 
 class ProductApplication:
 
@@ -28,9 +49,8 @@ class ProductApplication:
             company=company, commit=commit)
 
     def get_products(self, company):
-        no_stock_dict = {'physical': 0, 'atp': 0, 'sold': 0, 'reserved': 0}
         for x in self.product_table.query.filter_by(company=company):
-            yield ProductLogic(x, no_stock_dict)
+            yield ProductLogic(x, StockLogic.null_stock())
 
     def get_or_create(self, table, **fields):
         try:

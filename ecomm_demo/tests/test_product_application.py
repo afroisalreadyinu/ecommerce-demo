@@ -1,8 +1,9 @@
 import unittest
 from collections import namedtuple
 from sqlalchemy import exc
+from neobunch import Bunch
 
-from ecomm_demo.product_application import ProductApplication, StorageApplication
+from ecomm_demo.product_application import ProductApplication, StorageApplication, StockLogic
 from common import MockTable, CompanyRow
 
 GTIN = '00845982006196'
@@ -136,3 +137,17 @@ class TestStorageApplication(unittest.TestCase):
         storage_app = StorageApplication(storage_table)
         with self.assertRaises(exc.SQLAlchemyError):
             storage = storage_app.get_for_company(company, 2)
+
+class TestStockLogic(unittest.TestCase):
+
+    def test_null_stock(self):
+        null_stock = StockLogic.null_stock()
+        self.assertEqual(null_stock.physical, 0)
+        self.assertEqual(null_stock.sold, 0)
+        self.assertEqual(null_stock.reserved, 0)
+        self.assertEqual(null_stock.atp, 0)
+
+    def test_to_dict(self):
+        stock = StockLogic(Bunch(physical=0, sold=0, reserved=0))
+        self.assertDictEqual(stock.to_dict(),
+                             {'physical': 0, 'sold': 0, 'reserved': 0, 'atp': 0})
