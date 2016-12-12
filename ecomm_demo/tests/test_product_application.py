@@ -3,7 +3,7 @@ from collections import namedtuple
 from sqlalchemy import exc
 from neobunch import Bunch
 
-from ecomm_demo.product_application import ProductApplication, StorageApplication, StockLogic
+from ecomm_demo.product_application import ProductApplication, StorageApplication, StockLogic, ProductLogic
 from common import MockTable, CompanyRow
 
 GTIN = '00845982006196'
@@ -151,3 +151,14 @@ class TestStockLogic(unittest.TestCase):
         stock = StockLogic(Bunch(physical=0, sold=0, reserved=0))
         self.assertDictEqual(stock.to_dict(),
                              {'physical': 0, 'sold': 0, 'reserved': 0, 'atp': 0})
+
+class TestProductLogic(unittest.TestCase):
+
+    def test_to_dict(self):
+        product = Bunch(id=3, label='testing', gtin=GTIN)
+        stock = Bunch(physical=10, sold=4, reserved=1)
+        product_logic = ProductLogic(product, StockLogic(stock))
+        product_dict = product_logic.to_dict()
+        stock_dict = product_dict.pop('stock').to_dict()
+        self.assertDictEqual(product_dict, {'id': 3, 'label': 'testing', 'gtin': GTIN})
+        self.assertDictEqual(stock_dict, {'physical': 10, 'sold': 4, 'reserved': 1, 'atp': 5})
