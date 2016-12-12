@@ -8,10 +8,13 @@ class ProductLogic:
         self.stock = stock
 
     def to_dict(self):
+        stock_dict = {'physical': self.stock.physical,
+                      'sold': self.stock.sold,
+                      'reserved': self.stock.reserved}
         return {'id': self.product.id,
                 'label': self.product.label,
                 'gtin': self.product.gtin,
-                'stock': self.stock}
+                'stock': stock_dict}
 
 class ProductApplication:
 
