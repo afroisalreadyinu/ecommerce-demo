@@ -61,6 +61,11 @@ class ProductApplication:
         return {'intakes': results, 'errors': errors}
 
 
+    def stock_for_storage(self, storage):
+        for stock in self.stock_table.query.filter_by(storage=storage):
+            yield ProductLogic(stock.product, stock)
+
+
 class StorageApplication:
     def __init__(self, storage_table):
         self.storage_table = storage_table

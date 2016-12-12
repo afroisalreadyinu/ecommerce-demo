@@ -86,6 +86,16 @@ class TestProductApplication(unittest.TestCase):
         self.assertEqual(result['errors'][0]['gtin'], 'blahblah')
         self.assertEqual(len(result['intakes']), 2)
 
+    def test_stock_for_storage(self):
+        existing_stock = [
+            StockRow(product='prod 1', storage='storage', physical=3),
+            StockRow(product='prod 2', storage='other storage', physical=3),
+        ]
+        app = ProductApplication(None, MockStockTable(existing_stock))
+        stock = list(app.stock_for_storage('storage'))
+        self.assertEqual(len(stock), 1)
+        self.assertEqual(stock[0].product, 'prod 1')
+
 
 class TestStorageApplication(unittest.TestCase):
 
