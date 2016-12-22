@@ -50,7 +50,7 @@ class ProductApplication:
             label=label, gtin=gtin,
             company=company), StockLogic.null_stock())
 
-    def get_products(self, company):
+    def products_for_company(self, company):
         for x in self.product_table.query.filter_by(company=company):
             yield ProductLogic(x, StockLogic.null_stock())
 

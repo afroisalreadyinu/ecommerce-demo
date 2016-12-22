@@ -103,7 +103,7 @@ def get_products(user):
     user = user_app.authenticate(session.get('email'))
     if not user:
         abort(401)
-    products = product_app.get_products(user.company)
+    products = product_app.products_for_company(user.company)
     return jsonify([p.to_dict() for p in products])
 
 @app.route("/storage", methods=["POST"])

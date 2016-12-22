@@ -45,7 +45,7 @@ class TestProductApplication(unittest.TestCase):
     def test_query_products(self):
         existing = [ProductRow(label='test', gtin=GTIN, company='puma')]
         app = ProductApplication(MockProductTable(existing=existing), MockStockTable())
-        products = app.get_products('puma')
+        products = app.products_for_company('puma')
         self.assertEqual(len(list(products)), 1)
 
     def test_intake_for_product_no_initial_stock(self):
