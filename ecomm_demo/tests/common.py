@@ -24,10 +24,16 @@ class MockTable:
     def __init__(self, existing=None):
         self.existing = existing or []
 
-    def new_row(self, commit=False, **kwargs):
+    def new_row(self, **kwargs):
         row = self.ROW_CLASS(**kwargs)
         self.existing.append(row)
         return row
+
+    def get_or_create(self, **kwargs):
+        try:
+            return self.filter_by(**kwargs).one()
+        except exc.SQLAlchemyError:
+            return self.new_row(**kwargs)
 
     @property
     def query(self):
@@ -37,6 +43,9 @@ class MockTable:
         results = [x for x in self.existing
                    if all(getattr(x, attr) == val for attr,val in filters.items())]
         return ResultSet(results)
+
+    def commit(self):
+        pass
 
 class MockUserTable(MockTable):
     ROW_CLASS = UserRow
