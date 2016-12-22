@@ -37,7 +37,7 @@ class TestProductApplication(unittest.TestCase):
         product_table = MockProductTable()
         app = ProductApplication(product_table, MockStockTable())
         product = app.add_product(label='A label', gtin=GTIN, company='puma')
-        self.assertEqual(product.label, 'A label')
+        self.assertEqual(product.product.label, 'A label')
         self.assertEqual(len(product_table.existing), 1)
         self.assertEqual(product_table.existing[0].company, 'puma')
 

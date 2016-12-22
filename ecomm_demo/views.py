@@ -89,9 +89,11 @@ def signup_with_invitation():
 @logged_in
 def add_products(user):
     data = request.get_json()
+    new_products = []
     for product in data:
-        new_product = product_app.add_product(commit=True, company=user.company, **product)
-    return jsonify({"status": "ok"})
+        new_products.append(product_app.add_product(company=user.company, **product))
+    db.session.commit()
+    return jsonify(new_products)
 
 @app.route("/products", methods=["GET"])
 @logged_in

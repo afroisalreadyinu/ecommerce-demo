@@ -14,6 +14,7 @@ class ProductLogic:
                 'gtin': self.product.gtin,
                 'stock': self.stock}
 
+
 class StockLogic:
     REPLICATED_FIELDS = ['physical', 'sold', 'reserved']
     def __init__(self, stock_row):
@@ -37,16 +38,17 @@ class StockLogic:
         fields = self.REPLICATED_FIELDS + ['atp']
         return {field:getattr(self, field) for field in fields}
 
+
 class ProductApplication:
 
     def __init__(self, product_table, stock_table):
         self.product_table = product_table
         self.stock_table = stock_table
 
-    def add_product(self, label, gtin, company, commit=False):
-        return self.product_table.new_row(
+    def add_product(self, label, gtin, company):
+        return ProductLogic(self.product_table.new_row(
             label=label, gtin=gtin,
-            company=company, commit=commit)
+            company=company), StockLogic.null_stock())
 
     def get_products(self, company):
         for x in self.product_table.query.filter_by(company=company):
