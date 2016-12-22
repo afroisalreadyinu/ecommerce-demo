@@ -162,6 +162,13 @@ class TestStockLogic(unittest.TestCase):
         self.assertEqual(stock_logic.reserved, 3)
         self.assertEqual(stock_logic.atp, 4)
 
+    def test_from_product_empty_stocks(self):
+        stock_logic = StockLogic.from_product_stocks([])
+        self.assertEqual(stock_logic.physical, 0)
+        self.assertEqual(stock_logic.sold, 0)
+        self.assertEqual(stock_logic.reserved, 0)
+        self.assertEqual(stock_logic.atp, 0)
+
 class TestProductLogic(unittest.TestCase):
 
     def test_to_dict(self):
