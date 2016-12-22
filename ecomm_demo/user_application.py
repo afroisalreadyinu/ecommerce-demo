@@ -41,8 +41,7 @@ class CompanyApplication:
         invitation = self.invitation_table.new_row(
             nonce=create_invitation_nonce(),
             company=current.company,
-            email=invitee_email, commit=True
-        )
+            email=invitee_email)
         return Email(invitee_email, subject, content)
 
     def get_invitations(self, company):
@@ -71,8 +70,8 @@ class UserApplication:
             user = self.user_table.new_row(
                 email=email,
                 pw_hash=self.security_context.encrypt(password),
-                company=company,
-                commit=True)
+                company=company)
+            self.user_table.commit()
         except exc.SQLAlchemyError:
             raise UserApplicationError('User exists')
         return user

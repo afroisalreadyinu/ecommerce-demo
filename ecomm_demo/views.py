@@ -64,6 +64,7 @@ def login():
 def invite(user):
     data = request.get_json()
     invitation = company_app.invite_to_company(user, data['invitee_email'])
+    db.session.commit()
     return jsonify({'recipient': invitation.recipient})
 
 @app.route('/invite', methods=['GET'])
@@ -82,6 +83,7 @@ def signup_with_invitation():
     user = user_app.signup(invitation.email,
                            data['password'],
                            invitation.company.label)
+    db.session.commit()
     return jsonify({'status': 'OK'})
 
 
@@ -109,6 +111,7 @@ def get_products(user):
 def new_storage(user):
     data = request.get_json()
     storage = storage_app.new_storage_location(data['label'], user.company)
+    db.session.commit()
     return jsonify({'label': storage.label, 'id': storage.id})
 
 @app.route("/storage", methods=["GET"])

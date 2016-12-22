@@ -113,6 +113,7 @@ def step_impl(context):
     assert_that(len(json_response), equal_to(len(context.products)))
     no_stock = {'physical': 0, 'sold': 0, 'reserved': 0, 'atp': 0}
     for product in json_response:
+        assert_that('id', is_in(product))
         product.pop('id')
         stock = product.pop('stock')
         assert_that(stock, equal_to(no_stock))

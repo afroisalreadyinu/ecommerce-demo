@@ -88,14 +88,13 @@ class ProductApplication:
             yield ProductLogic(stock.product, StockLogic(stock))
 
 
+
 class StorageApplication:
     def __init__(self, storage_table):
         self.storage_table = storage_table
 
-    def new_storage_location(self, label, company, commit=True):
-        return self.storage_table.new_row(
-            label=label, company=company, commit=commit
-        )
+    def new_storage_location(self, label, company):
+        return self.storage_table.new_row(label=label, company=company)
 
     def get_all_for_company(self, company):
         return self.storage_table.query.filter_by(company=company)
