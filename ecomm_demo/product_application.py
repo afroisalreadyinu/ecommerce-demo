@@ -54,16 +54,9 @@ class ProductApplication:
         for x in self.product_table.query.filter_by(company=company):
             yield ProductLogic(x, StockLogic.null_stock())
 
-    def get_or_create(self, table, **fields):
-        try:
-            row = table.query.filter_by(**fields).one()
-        except exc.SQLAlchemyError:
-            row = table.new_row(**fields)
-        return row
-
     def intake_for_product(self, storage_location, product, intake_value):
-        stock_row = self.get_or_create(
-            self.stock_table, storage=storage_location, product=product)
+        stock_row = self.stock_table.get_or_create(
+            storage=storage_location, product=product)
         stock_row.physical += intake_value
         return ProductLogic(product, StockLogic(stock_row))
 

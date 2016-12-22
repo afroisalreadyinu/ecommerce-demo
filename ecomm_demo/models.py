@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import exc
 from ecomm_demo.application import app
 
 db = SQLAlchemy(app)
@@ -13,6 +14,14 @@ class EcommerceModel:
     def new_row(cls, *args, **kwargs):
         row = cls(*args, **kwargs)
         db.session.add(row)
+        return row
+
+    @classmethod
+    def get_or_create(cls, **fields):
+        try:
+            row = cls.query.filter_by(**fields).one()
+        except exc.SQLAlchemyError:
+            row = cls.new_row(**fields)
         return row
 
 class User(db.Model, EcommerceModel):
