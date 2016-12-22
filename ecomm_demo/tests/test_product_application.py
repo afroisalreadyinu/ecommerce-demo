@@ -17,10 +17,12 @@ class StorageRow:
         self.id = id
 
 class StockRow:
-    def __init__(self, storage, product, physical=0):
+    def __init__(self, storage, product, physical=0, sold=0, reserved=0):
         self.storage = storage
         self.product = product
         self.physical = physical
+        self.sold = sold
+        self.reserved = reserved
 
 class MockProductTable(MockTable):
     ROW_CLASS = ProductRow
