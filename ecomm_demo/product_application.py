@@ -59,8 +59,9 @@ class ProductApplication:
             company=company), StockLogic.null_stock())
 
     def products_for_company(self, company):
-        for x in self.product_table.query.filter_by(company=company):
-            yield ProductLogic(x, StockLogic.null_stock())
+        for product in self.product_table.query.filter_by(company=company):
+            stocks_logic = StockLogic.from_product_stocks(product.stocks)
+            yield ProductLogic(product, stocks_logic)
 
     def intake_for_product(self, storage_location, product, intake_value):
         stock_row = self.stock_table.get_or_create(
