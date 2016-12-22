@@ -8,7 +8,13 @@ from common import MockTable, CompanyRow
 
 GTIN = '00845982006196'
 GTIN_2 = '00845982006875'
-ProductRow = namedtuple('UserRow', 'label gtin company')
+
+class ProductRow:
+    def __init__(self, label, gtin, company, stocks=None):
+        self.label = label
+        self.gtin = gtin
+        self.company = company
+        self.stocks = stocks or []
 
 class StorageRow:
     def __init__(self, company, label, id=None):
@@ -44,11 +50,17 @@ class TestProductApplication(unittest.TestCase):
         self.assertEqual(product_table.existing[0].company, 'puma')
 
 
-    def test_query_products(self):
-        existing = [ProductRow(label='test', gtin=GTIN, company='puma')]
-        app = ProductApplication(MockProductTable(existing=existing), MockStockTable())
-        products = app.products_for_company('puma')
-        self.assertEqual(len(list(products)), 1)
+    def test_products_for_company(self):
+        stocks = [StockRow(None, None, physical=10, sold=3, reserved=2),
+                  StockRow(None, None, physical=8, sold=2, reserved=1)]
+        existing = [ProductRow(label='test', gtin=GTIN,
+                               company='puma', stocks=stocks)]
+        app = ProductApplication(
+            MockProductTable(existing=existing), MockStockTable())
+        products = list(app.products_for_company('puma'))
+        self.assertEqual(len(products), 1)
+        self.assertEqual(products[0].product.label, 'test')
+        self.assertEqual(products[0].stock.physical,18)
 
     def test_intake_for_product_no_initial_stock(self):
         app = ProductApplication(None, MockStockTable())
