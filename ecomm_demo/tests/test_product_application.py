@@ -152,6 +152,16 @@ class TestStockLogic(unittest.TestCase):
         self.assertDictEqual(stock.to_dict(),
                              {'physical': 0, 'sold': 0, 'reserved': 0, 'atp': 0})
 
+    def test_from_product_stocks(self):
+        stock_list = [Bunch(physical=10, sold=5, reserved=2),
+                      Bunch(physical=5, sold=3, reserved=1)]
+        stock_logic = StockLogic.from_product_stocks(stock_list)
+        #the values should simply be summed
+        self.assertEqual(stock_logic.physical, 15)
+        self.assertEqual(stock_logic.sold, 8)
+        self.assertEqual(stock_logic.reserved, 3)
+        self.assertEqual(stock_logic.atp, 4)
+
 class TestProductLogic(unittest.TestCase):
 
     def test_to_dict(self):

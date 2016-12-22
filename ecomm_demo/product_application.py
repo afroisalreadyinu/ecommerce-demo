@@ -34,6 +34,14 @@ class StockLogic:
         zero_value = Bunch(physical=0, sold=0, reserved=0)
         return StockLogic(zero_value)
 
+    @classmethod
+    def from_product_stocks(self, stocks):
+        physical = sum(stock.physical for stock in stocks)
+        sold = sum(stock.sold for stock in stocks)
+        reserved = sum(stock.reserved for stock in stocks)
+        stock_row = Bunch(physical=physical, sold=sold, reserved=reserved)
+        return StockLogic(stock_row)
+
     def to_dict(self):
         fields = self.REPLICATED_FIELDS + ['atp']
         return {field:getattr(self, field) for field in fields}
