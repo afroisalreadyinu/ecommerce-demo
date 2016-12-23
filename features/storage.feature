@@ -16,3 +16,4 @@ Feature: Storage
 	| gtin           | intake         |
 	| 00845982006196 | 10             |
       then the stock value is increased
+       and product shows total inventory

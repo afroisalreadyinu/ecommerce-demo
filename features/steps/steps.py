@@ -171,3 +171,12 @@ def step_impl(context):
     assert_that(stock[0]['stock']['physical'], equal_to(context.intakes[0]['intake']))
     assert_that(stock[0]['stock']['sold'], equal_to(0))
     assert_that(stock[0]['stock']['reserved'], equal_to(0))
+
+@behave.then('product shows total inventory')
+def step_impl(context):
+    resp = context.client.get('/products')
+    assert_that(resp.status_code, equal_to(200))
+    products = to_json(resp)
+    assert_that(len(products), 1)
+    assert_that(products[0]['stock']['physical'], equal_to(10))
+    assert_that(products[0]['stock']['atp'], equal_to(10))
