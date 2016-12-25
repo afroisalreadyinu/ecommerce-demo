@@ -180,3 +180,28 @@ def step_impl(context):
     assert_that(len(products), 1)
     assert_that(products[0]['stock']['physical'], equal_to(10))
     assert_that(products[0]['stock']['atp'], equal_to(10))
+
+#-- Orders
+@behave.when('the user posts order data')
+def step_impl(context):
+    product_gtin = to_json(context.client.get('/products'))[0]['gtin']
+    order_item = {'gtin': product_gtin, 'quantity': 1}
+    order_data = {'address': {'name': '',
+                              'address_line_1': 'Unter den Linden 3',
+                              'postcode': '10117',
+                              'city': 'Berlin',
+                              'country_code': 'DE'},
+                  'order_items': [order_item],
+                  'currency_code': 'EUR',
+                  'total_net': 23.45,
+                  'total_gross': 25.00}
+    resp = context.client.post_json('/order', order_data)
+    assert_that(resp.status_code, equal_to(200))
+    context.order_id = to_json(resp)['order']['id']
+
+
+@behave.then('an order is created')
+def step_impl(context):
+    resp = context.client.get('/order/{}'.format(context.order_id))
+    assert_that(resp.status_code, equal_to(200))
+    order = to_json(resp)
