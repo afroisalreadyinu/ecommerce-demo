@@ -5,7 +5,6 @@ Feature: Storage
       when the user posts the new storage location form
       then a new storage location is created
 
-  @wip
   Scenario: Import stock
      Given the user is logged in
        and storage location exists
