@@ -1,15 +1,14 @@
-* TODO Build feature backlog
-
-* TODO Global stock for products
-
-* TODO Transaction handling
-
 * TODO Creating orders
 ** TODO Model
 ** TODO Application
 ** TODO Endpoints
 
-* TODO Specify order routing and stock values
+* TODO Using table expressions instead of ORMs
+
+* TODO Using common data types instead of named tuples and attrs etc
+
+* DONE Specify order routing and stock values
+  CLOSED: [2016-12-25 Sun 12:54]
 
 * DONE Fix bug with existing user signup
   CLOSED: [2016-11-27 Sun 22:39]
@@ -39,3 +38,9 @@
    CLOSED: [2016-12-12 Mon 12:26]
 ** DONE Using attrs for non-namedtupe db rows
    CLOSED: [2016-12-12 Mon 12:26]
+
+* DONE Global stock for products
+  CLOSED: [2016-12-25 Sun 12:53]
+
+* DONE Build feature backlog
+  CLOSED: [2016-12-25 Sun 12:54]
