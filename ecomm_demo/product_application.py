@@ -1,5 +1,5 @@
 from sqlalchemy import exc
-from neobunch import Bunch
+from types import SimpleNamespace as Bunch
 
 
 class ProductLogic:

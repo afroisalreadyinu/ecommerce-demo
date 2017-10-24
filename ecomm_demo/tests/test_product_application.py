@@ -1,7 +1,7 @@
 import unittest
 from collections import namedtuple
 from sqlalchemy import exc
-from neobunch import Bunch
+from types import SimpleNamespace as Bunch
 
 from ecomm_demo.product_application import ProductApplication, StorageApplication, StockLogic, ProductLogic
 from common import MockTable, CompanyRow

@@ -1,0 +1,11 @@
+* TODO Install babel
+
+* TODO Install Webpack
+
+* TODO Webpack config
+
+* TODO Use whatever Arjun uses for testing
+
+* TODO Login
+
+* TODO Create product

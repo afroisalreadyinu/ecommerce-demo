@@ -1,0 +1,23 @@
+{
+  "name": "ecomm-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for the Ecommerce demo application",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "ecommerce"
+  ],
+  "author": "Ulas Tuerkmen",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/afroisalreadyinu/ecommerce-demo.git"
+  }
+}
