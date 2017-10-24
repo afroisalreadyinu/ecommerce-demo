@@ -8,4 +8,4 @@ function getConfig(env, optionsMap) {
   }
 };
 
-module.exports = getConfig
+module.exports = getConfig;

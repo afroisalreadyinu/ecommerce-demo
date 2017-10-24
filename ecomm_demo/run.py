@@ -4,7 +4,6 @@ from ecomm_demo.models import db
 import ecomm_demo.views
 
 def run_app():
-    init_app()
     app.debug = True
     app.run(port=6001)
 

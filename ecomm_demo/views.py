@@ -1,4 +1,4 @@
-from flask import jsonify, request, session, abort
+from flask import jsonify, request, session, abort, render_template
 from sqlalchemy import exc
 from passlib.apps import custom_app_context
 from json import JSONEncoder
@@ -29,6 +29,10 @@ app.json_encoder = CustomEncoder
 
 @app.route("/")
 def index():
+    return render_template("index.html")
+
+@app.route("/status")
+def user_status():
     if 'email' in session:
         return jsonify({'email': session['email']})
     return jsonify({})
