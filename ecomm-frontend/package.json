@@ -4,7 +4,8 @@
   "description": "Frontend for the Ecommerce demo application",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "build": "webpack --display-error-details --progress"
   },
   "keywords": [
     "ecommerce"
@@ -19,5 +20,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/afroisalreadyinu/ecommerce-demo.git"
+  },
+  "devDependencies": {
+    "webpack": "^3.8.1"
   }
 }
