@@ -1,3 +1,4 @@
+from os.path import abspath, join
 from flask import Flask
 
 class Config:
@@ -7,7 +8,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     BASE_URL = "localhost:6001"
 
-app = Flask('ecommerce-demo')
+js_dir = abspath(join(__file__, '../static/'))
+app = Flask('ecommerce-demo',
+            static_folder=js_dir,
+            static_url_path='/static')
 app.config.from_object(Config)
 
 #-----------------------------------------
